@@ -1,0 +1,20 @@
+:local {
+  .container {
+    position: absolute;
+    top: 30%;
+    left: 10px;
+    width: calc(100% - 20px);
+  }
+
+  .container h2 {
+    font-size: 5rem;
+  }
+
+  .container a {
+    font-size: 1.4rem;
+  }
+
+  .container ol {
+    padding-left: 20px;
+  }
+}

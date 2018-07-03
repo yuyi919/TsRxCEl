@@ -1,0 +1,1 @@
+export type Data<T> = Array<T> | null | undefined;
