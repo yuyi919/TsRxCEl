@@ -6,6 +6,7 @@ import { Route } from "react-router-dom";
 export interface IPageRouteProps<P> {
     computedMatch?: match<P>;
     localtion?: H.Location;
+    children?: React.ReactNode | React.ReactNodeArray;
 }
 
 export type GetRoutes = React.StatelessComponent<RouteProps>;
@@ -20,29 +21,23 @@ export interface IPageRouteConfig {
  * 需要一个泛型参数<P>，为路由传递进组件的参数结构
  * @param config 结构参照IPageRouteConfig
  */
-export function PageRoute<P = {}, PP = {}>({path,exact,children}: IPageRouteConfig) {
-    return function getRoute(Target: React.ComponentType<RouteComponentProps<P>> | React.ComponentType<PP | any>) {
-        let routes: any = Target;
-        if(children && (children instanceof Array)){
-            routes = (props: RouteComponentProps<P>): React.ReactNode => {
-                return (
-                    <>
-                        <Target {...props} />
-                    {
-                        children.map((Children: any)=>{
-                            console.log(Children)
-                            return <Children key='path'/>;
-                        })
-                    }</>
-                )
-            }
-        }
+export function PageRoute<P = {}, PP = {}>(config: IPageRouteConfig) {
+    return function(Target: React.ComponentType<RouteComponentProps<P>> | React.ComponentType<PP | any>) {
         return (
-            function(props: IPageRouteProps<P>){
-                console.log("*************************",props);
-                return <Route exact={ exact || true } path={ path } component={routes} />;
+            function({children,...other}: IPageRouteProps<P>){
+                console.log("*************************",children,other);
+                const routes = function(props: RouteComponentProps<P>): React.ReactNode {
+                    return (
+                        <Target {...props} >{
+                            React.Children.toArray(children).map((child: any)=>{
+                                return React.cloneElement(child,{});
+                            })
+                        }</Target>
+                    )
+                }
+                return <Route exact={ config.exact || true } path={ config.path } render={routes} />;
             }
         ) as any;
     }
 }
-export const Test = PageRoute({path:''})(function(){return<div />})
+export const Test = PageRoute({path:'/'})(function(){return<div>test</div>})

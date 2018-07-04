@@ -1,5 +1,6 @@
 import { inject, observer } from 'mobx-react';
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { Observable } from 'rxjs';
 // import { takeUntil } from 'rxjs/operators';
 import { debounceTime, share, switchMap, takeUntil } from 'rxjs/operators';
@@ -11,13 +12,12 @@ import { RxcEventType } from './interface';
 import { RxcNativeEvent } from './RxcNativeEvent';
 import { RxComponentBasic } from './RxComponentBasic';
 
-
-// declare const System: any;
 export interface IRxComponentConfig {
     name: string;
     observer?: boolean
     inject?: Array<string>;
     style?: string | ((props: any) => string);
+    portal?: Element | null | undefined;
 }
 
 /**
@@ -25,7 +25,6 @@ export interface IRxComponentConfig {
  * @param keyName 
  */
 export function RxComponent(config: IRxComponentConfig) {
-    console.log(require('./style.css'));
     return function(target: React.ComponentClass) {
         // target.prototype.$isRxComponent = true;
         if(config.observer){
@@ -50,7 +49,6 @@ export function RxComponent(config: IRxComponentConfig) {
             constructor(props: any) {
                 super(props);
                 console.log("*************************",target.name,"init");
-                // constructorDriver.emit(this);
                 if (injectMethods) {
                     injectMethods.getTypes().forEach((methods: Set<InjectMethod>, type: RxcEventType)=>{
                         this.getRxEventEmitter(type).pipe(
@@ -83,7 +81,12 @@ export function RxComponent(config: IRxComponentConfig) {
                 }
             }
             public render() {
-                return <InnerComponent ref={this.innerComponentRef} {...this.props} {...this.rxEventProps} />;
+                const show = <InnerComponent ref={this.innerComponentRef} {...this.props} {...this.rxEventProps} />;
+                if(config.portal){
+                    return ReactDOM.createPortal(show, config.portal)
+                } else {
+                    return show;
+                }
             }
         })`${config.style}` as any;
         if(config.inject){

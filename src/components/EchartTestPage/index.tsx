@@ -24,10 +24,6 @@ export interface IEchartsPageParam {
 })
 export class EchartsTestPage extends React.PureComponent<IPageRouteProps<IEchartsPageParam>, any> {
     
-    public static getDerivedStateFromProps(nextProps: any, prevState: any) {
-        console.log(nextProps,prevState);
-        return null;
-    }
     public onComponentUnmount: EventEmitter<boolean> = new EventEmitter<boolean>();
     public state: any = {
         data: [1]
@@ -37,22 +33,20 @@ export class EchartsTestPage extends React.PureComponent<IPageRouteProps<IEchart
         super(props);
     }
     public componentDidMount () {
-        console.log(this.props.match)
+        console.log('EchartsTestPage！', this.props)
         interval(10000).pipe(
             takeUntil(this.onComponentUnmount)
         ).subscribe(this.updateData)
     }
     public updateData = (num: number): void => {
-        console.log(num)
         this.setState({ data: [...this.state.data, num] });
     }
     // getSnapshotBeforeUpdate(prevProps: any, prevState: any) {
     //     return null;
     // }
     public render() {
-        console.log(this.props);
         return (
-            <Echarts>
+            <Echarts show={true}>
                 <Options>
                     <Line name='测试线图' data={this.state.data} />
                 </Options>
@@ -60,7 +54,6 @@ export class EchartsTestPage extends React.PureComponent<IPageRouteProps<IEchart
         );
     }
     public componentWillUnmount() {
-        console.log('unmount')
         this.onComponentUnmount.emit(true);
     }
 }

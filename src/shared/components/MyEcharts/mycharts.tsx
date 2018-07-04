@@ -24,8 +24,9 @@ export interface IMyEchartsProps {
     name: 'Echarts',
     observer: true,
     style: (props: any) => `
-        display: block;
-    `
+        display: ${props.show?"block":"none"};
+    `,
+    portal: document.getElementById('screen'),
 })
 export class Echarts extends React.Component<IMyEchartsProps, any> {
     @observable 
@@ -82,7 +83,7 @@ export class Echarts extends React.Component<IMyEchartsProps, any> {
                     opts={{ renderer: svg ? "svg" : "canvas" }}
                 />}
                 <Provider key='provider' chartsInstance={this.chartsInstance} optionContainer={this}>
-                    <div>{children}</div>
+                    <>{children}</>
                 </Provider>
             </React.Fragment>
         );

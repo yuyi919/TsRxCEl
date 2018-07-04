@@ -15,7 +15,7 @@ const stores = new RootStore();
 const theme: Theme = createMuiTheme({
     palette: {
         primary: Colors.lightBlue,
-        secondary: Colors.lightGreen,
+        secondary: Colors.blueGrey,
         error: Colors.lightGreen,
         type: 'dark',
         background:{
@@ -35,8 +35,9 @@ export default function RootRoutes(){
                             <LiteButton type='raised' color='default' routerLink='/'>home</LiteButton>
                             <Switch>
                                 <Route exact={true} path="/" component={AppHomePage} />
-                                <Route exact={true} path="/counter" component={CounterPage} />
-                                <EchartsTestPage />
+                                <EchartsTestPage>
+                                    <Route exact={true} path="/counter" component={CounterPage} />
+                                </EchartsTestPage>
                             </Switch>
                         </>
                     </HashRouter>
