@@ -16,7 +16,11 @@ require('../config/env');
 
 const fs = require('fs');
 const chalk = require('chalk');
+const express = require('express');
 const webpack = require('webpack');
+const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
+const { spawn } = require('child_process');
 const WebpackDevServer = require('webpack-dev-server');
 const clearConsole = require('react-dev-utils/clearConsole');
 const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
@@ -78,9 +82,12 @@ choosePort(HOST, DEFAULT_PORT)
       proxyConfig,
       urls.lanUrlForConfig
     );
-    const devServer = new WebpackDevServer(compiler, serverConfig);
+    const app = express();
+    const wdm = webpackDevMiddleware(compiler, serverConfig);
+    app.use(wdm);
+    app.use(webpackHotMiddleware(compiler, serverConfig));
     // Launch WebpackDevServer.
-    devServer.listen(port, HOST, err => {
+    const server = app.listen(port, HOST, err => {
       if (err) {
         return console.log(err);
       }
@@ -88,7 +95,6 @@ choosePort(HOST, DEFAULT_PORT)
         clearConsole();
       }
       console.log(`Listening at http://${HOST}:${port}`);
-      const { spawn } = require('child_process');
       spawn('npm', ['run', 'start-hot'], { shell: true, env: process.env, stdio: 'inherit' })
         .on('close', code => process.exit(code))
         .on('error', spawnError => console.error(spawnError));
@@ -96,8 +102,10 @@ choosePort(HOST, DEFAULT_PORT)
 
     ['SIGINT', 'SIGTERM'].forEach(function(sig) {
       process.on(sig, function() {
-        devServer.close();
-        process.exit();
+        wdm.close();
+        server.close(() => {
+          process.exit();
+        });
       });
     });
   })

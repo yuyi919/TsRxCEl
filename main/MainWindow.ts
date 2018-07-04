@@ -34,11 +34,7 @@ export default class MainWindow {
             require('electron-reload')(__dirname, {
                 electron: require(path.join(__dirname, `../node_modules/electron`))
             });
-            this.win.loadURL(url.format({
-                pathname: path.join(__dirname, '../build/index.html'),
-                protocol: 'file:',
-                slashes: true
-            }));
+            this.win.loadURL('http://localhost:3000/');
         } else {
             this.win.loadURL(url.format({
                 pathname: path.join(__dirname, '../build/index.html'),

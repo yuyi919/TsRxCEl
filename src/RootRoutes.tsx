@@ -32,7 +32,7 @@ export default function RootRoutes(){
                 <Provider appState={stores}>
                     <HashRouter>
                         <>
-                            <LiteButton type='raised' color='default' routerLink='/'>home</LiteButton>
+                            <LiteButton type='raised' color='default' routerLink='/'>home2</LiteButton>
                             <Switch>
                                 <Route exact={true} path="/" component={AppHomePage} />
                                 <EchartsTestPage>
