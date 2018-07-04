@@ -80,6 +80,7 @@ export function RxComponent(config: IRxComponentConfig) {
                     });
                 }
             }
+            
             public render() {
                 const show = <InnerComponent ref={this.innerComponentRef} {...this.props} {...this.rxEventProps} />;
                 if(config.portal){

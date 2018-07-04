@@ -15,6 +15,7 @@
     ],
     "object-literal-sort-keys": [false],
     "array-type": [false],
-    "triple-equals": [false]
+    "triple-equals": [false],
+    "no-var-requires": [false]
   }
 }
