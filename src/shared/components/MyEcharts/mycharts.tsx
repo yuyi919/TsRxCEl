@@ -7,7 +7,6 @@ import { IOptionsTree } from '.';
 import { onDestroy, RxComponent } from '../../utils';
 import { ChartsInstance } from './chartsInstance';
 
-
 export interface IMyEchartsProps {
     className?: string;
     dataSet?: Array<ObjectMap> | rx.Observable<Array<ObjectMap>>;
@@ -24,14 +23,14 @@ export interface IMyEchartsProps {
     name: 'Echarts',
     observer: true,
     style: (props: any) => `
-        display: ${props.show?"block":"none"};
+        display: ${props.show ? "block" : "none"};
     `,
     portal: document.getElementById('screen'),
 })
 export class Echarts extends React.Component<IMyEchartsProps, any> {
-    @observable 
+    @observable
     public chartsInstance: ChartsInstance | null;
-    @observable 
+    @observable
     public option: ObjectMap | null;
 
     constructor(props: IMyEchartsProps) {
@@ -41,20 +40,20 @@ export class Echarts extends React.Component<IMyEchartsProps, any> {
         this.onChartsInit = this.onChartsInit.bind(this);
     }
 
-    @action 
+    @action
     public setOption(option: ObjectMap) {
         this.option = option;
     }
 
-    @computed 
+    @computed
     public get chartsOption(): any {
         return this.option ? toJS(this.option) : null;
     }
 
-    @action 
-    @onDestroy('') 
-    public exit(e: any){
-        console.log('onUnmount',this,(this as any).$isRxComponent);
+    @action
+    @onDestroy('')
+    public exit(e: any) {
+        console.log('onUnmount', this, (this as any).$isRxComponent);
         this.option = null;
         if (this.chartsInstance) {
             this.chartsInstance.destroy();
@@ -66,10 +65,10 @@ export class Echarts extends React.Component<IMyEchartsProps, any> {
         // console.log(this.chartsOption,this,(this as any).$isRxComponent);
     }
 
-    @action 
+    @action
     public onChartsInit(event: any): void {
         this.chartsInstance = new ChartsInstance(event);
-        console.log(this.chartsInstance,this);
+        console.log(this.chartsInstance, this);
     }
 
     public render() {

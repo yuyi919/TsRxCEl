@@ -79,7 +79,9 @@ export class Options extends React.Component<IOptionsProps, any> {
         )
     }
     public componentWillUnmount() {
-        this.onUnmount.emit(true);
-        this.onUnmount.dispose();
+        this.onUnmount.once(true);
+        this.seriesList.dispose();
+        this.xAxisList.dispose();
+        this.yAxisList.dispose();
     }
 }

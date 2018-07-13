@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as rx from 'rxjs';
 import { Observable } from 'rxjs';
 import { map, share, takeUntil } from 'rxjs/operators';
-import { EventEmitter, onDestroy, onInit, rxcDestroy, RxcInnerComponentProps, RxComponent } from '../../../utils';
+import { EventEmitter, onChanges, onDestroy, onInit, rxcDestroy, RxcInnerComponentProps, RxComponent } from '../../../utils';
 import { Options } from '../options';
 
 /**
@@ -62,10 +62,10 @@ export class Series extends React.Component<ISeriesProps, ISeriesState> {
   public seriesId: number | null;
   public setOption: EventEmitter<ISeriesOption>;
   public state: ISeriesState = {};
-  public baseOption: ISeriesOption | undefined;
-  public name: string | undefined; // seriesName
-  public type: string | undefined; // seriesType to lookup Echarts
-  public data: Array<any> | undefined;
+  public baseOption: ISeriesOption;
+  public name: string; // seriesName
+  public type: string; // seriesType to lookup Echarts
+  public data: Array<any>;
   constructor(props: ISeriesProps) {
     super(props);
     this.seriesId = null;
@@ -73,9 +73,8 @@ export class Series extends React.Component<ISeriesProps, ISeriesState> {
     this.registerTreeOption = this.registerTreeOption.bind(this);
   }
   /**
-   * base option
+   * get option
    */
-  
   get option(): ISeriesOption {
     return {
       ...this.state.baseOption,
@@ -94,8 +93,10 @@ export class Series extends React.Component<ISeriesProps, ISeriesState> {
       this.seriesId = optionsTree.seriesList.setObsItem(this.seriesId, setOption);
     }
   }
+
   @onInit() 
   public shallow(@rxcDestroy() destroy?: Observable<any>) {
+    console.log(destroy)
     destroy!.subscribe(e=>{
       console.log('destroy',e);
     });
@@ -111,21 +112,20 @@ export class Series extends React.Component<ISeriesProps, ISeriesState> {
       share()
     )
     this.registerTreeOption(subject);
-    subject.subscribe(console.log.bind(this, 'series' + this.name))
+    subject.subscribe(()=>console.log(this, 'series' + this.name))
   }
-  public componentDidUpdate(lastProps: ISeriesProps) {
+  
+  @onChanges('')
+  public onChanges(lastProps: ISeriesProps) {
     this.setOption.emit(this.option);
   }
+
   public render() {
     return null;
   }
-  @onDestroy('') 
-  public rxUnmount(): void {
-    console.log(this,'unmount');
+  @onDestroy('')
+  public rxUnmount(destroy: any): void {
+    console.log(this,'unmount', destroy);
     this.registerTreeOption(null);
-    this.name = undefined;
-    this.type = undefined;
-    this.data = undefined;
-    this.baseOption = undefined;
   }
 }

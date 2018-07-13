@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { InjectMethod } from './InjectMethod';
 import { RxcEventType } from './interface';
 
@@ -43,7 +44,7 @@ function getBean(target: any, methodName: string, type: RxcEventType) {
     if(!(bean instanceof InjectMethod)){
         bean = new InjectMethod(methodName, target);
     }
-    methods.addMethod(type, bean)
+    methods.addMethod(type, bean);
     return bean;
 }
 /**
@@ -81,8 +82,11 @@ export function onDestroy(keyName?: string) {
     return EventListener(RxcEventType.WillUnmount);
 }
 
-
-
+export const ReflectMetadataType = {
+    type: "design:type",
+    paramTypes: "design:paramtypes",
+    returnType: "design:returntype"
+}
 /**
  * 注入EventEmitter实例作为参数
  * @param listenerEventType 

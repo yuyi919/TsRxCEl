@@ -16,22 +16,19 @@ export interface IPageRouteConfig {
     exact?: boolean;
     children?: Array<any>;
 }
-
 /**
  * 需要一个泛型参数<P>，为路由传递进组件的参数结构
  * @param config 结构参照IPageRouteConfig
  */
 export function PageRoute<P = {}, PP = {}>(config: IPageRouteConfig) {
-    return function(Target: React.ComponentType<RouteComponentProps<P>> | React.ComponentType<PP | any>) {
+    return (Target: React.ComponentType<RouteComponentProps<P>> | React.ComponentType<PP | any>) => {
         return (
-            function({children,...other}: IPageRouteProps<P>){
+            ({children,...other}: IPageRouteProps<P>) => {
                 console.log("*************************",children,other);
-                const routes = function(props: RouteComponentProps<P>): React.ReactNode {
+                const routes = (props: RouteComponentProps<P>): React.ReactNode => {
                     return (
                         <Target {...props} >{
-                            React.Children.toArray(children).map((child: any)=>{
-                                return React.cloneElement(child,{});
-                            })
+                            React.Children.toArray(children).map((child: any)=>React.cloneElement(child,{}))
                         }</Target>
                     )
                 }
@@ -40,4 +37,3 @@ export function PageRoute<P = {}, PP = {}>(config: IPageRouteConfig) {
         ) as any;
     }
 }
-export const Test = PageRoute({path:'/'})(function(){return<div>test</div>})

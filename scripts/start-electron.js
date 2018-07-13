@@ -92,7 +92,7 @@ choosePort(HOST, DEFAULT_PORT)
         return console.log(err);
       }
       if (isInteractive) {
-        clearConsole();
+        //clearConsole();
       }
       console.log(`Listening at http://${HOST}:${port}`);
       spawn('npm', ['run', 'start-hot'], { shell: true, env: process.env, stdio: 'inherit' })

@@ -1,3 +1,4 @@
+import { RxcEventType } from './interface';
 import { IRxcEvent } from './RxComponentBasic';
 /**
  * 
@@ -7,7 +8,7 @@ export class RxcNativeEvent {
     public args: Array<any>;
     constructor(event: IRxcEvent){
         const { args, ...e } = event;
-        this.e = e;
+        this.e = {...e, typeStr: RxcEventType[event.type]};
         this.args = args;
     }
     public getInstance(){

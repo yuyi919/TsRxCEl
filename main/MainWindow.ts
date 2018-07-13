@@ -42,7 +42,6 @@ export default class MainWindow {
                 slashes: true
             }));
         }
-        this.win.webContents.openDevTools();
     
         
         const menu = Menu.buildFromTemplate(mainMenu);

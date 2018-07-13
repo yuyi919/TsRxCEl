@@ -7,6 +7,7 @@ import { HashRouter, Route, Switch } from "react-router-dom";
 import { AppHomePage } from "./components/AppHomePage";
 import { CounterPage } from "./components/CounterPage";
 import { EchartsTestPage } from './components/EchartTestPage';
+import IndexPage from './components/IndexPage';
 import { RootStore } from "./shared";
 import { LiteButton } from './shared/components/Lite';
 
@@ -31,15 +32,15 @@ export default function RootRoutes(){
             <MuiThemeProvider theme={theme}>
                 <Provider appState={stores}>
                     <HashRouter>
-                        <>
-                            <LiteButton type='raised' color='default' routerLink='/'>home2</LiteButton>
+                        <IndexPage>
+                            <LiteButton type='raised' color='default' routerLink='/'>home</LiteButton>
                             <Switch>
                                 <Route exact={true} path="/" component={AppHomePage} />
                                 <EchartsTestPage>
                                     <Route exact={true} path="/counter" component={CounterPage} />
                                 </EchartsTestPage>
                             </Switch>
-                        </>
+                        </IndexPage>
                     </HashRouter>
                 </Provider>
             </MuiThemeProvider>

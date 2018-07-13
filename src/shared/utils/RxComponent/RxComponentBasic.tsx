@@ -37,7 +37,7 @@ export abstract class RxComponentBasic extends Component<any,any> {
         this.rxEventProps = this.getRxEventProps();
     }
     public getRxEventEmitter(type: RxcEventType){
-        return RxcProviderInstance.getRxEventEmitter(type, this);
+        return RxcProviderInstance.getRxEventEmitter(type, this, this.$onDestroy);
     }
     public eventEmit(type: RxcEventType, ...args: any[]){
         RxcProviderInstance.emitRxEvent(type, this, ...args);
@@ -103,6 +103,7 @@ export abstract class RxComponentBasic extends Component<any,any> {
  */
 export interface IRxcEvent {
     type: RxcEventType;
+    typeStr?: string;
     instance: RxComponentBasic;
     isTruth?: boolean;
     args?: any;
