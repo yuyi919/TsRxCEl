@@ -18,6 +18,7 @@ export interface IRxComponentConfig {
     inject?: Array<string>;
     style?: string | ((props: any) => string);
     portal?: Element | null | undefined;
+    [key: string]: any
 }
 
 export const stringOfRxcEventType = {
@@ -119,8 +120,8 @@ export function RxComponent(config: IRxComponentConfig) {
             return result;
         });
         RxComponentUtil.setProxy(target, 'getDerivedStateFromProps', (willUpdate: any, handler: ProxyHandler<any>, args: Array<any>) => {
-            console.log(handler, target.name, args);
-            return Reflect.apply(willUpdate, handler, args);
+            // console.log(handler, target.name, args);
+            return Reflect.apply(willUpdate, handler, args) || null;
         })
         // 组件卸载代理
         RxComponentUtil.setProxy(target.prototype, 'componentWillUnmount', (onDestroy: any, handler: ProxyHandler<any>, args: Array<any>) => {

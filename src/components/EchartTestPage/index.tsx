@@ -5,7 +5,7 @@ import { interval } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Echarts, Line, Options } from '../../shared/components/MyEcharts';
 import { EventEmitter } from '../../shared/utils/EventEmitter';
-import { PageRoute, Test } from './PageRoute';
+import { PageRoute } from './PageRoute';
 
 
 export interface IPageRouteProps<P> {
@@ -19,8 +19,7 @@ export interface IEchartsPageParam {
 }
 @PageRoute<IEchartsPageParam>({
     path: '/echartsTest/:data',
-    exact: true,
-    children: [Test]
+    exact: true
 })
 export class EchartsTestPage extends React.PureComponent<IPageRouteProps<IEchartsPageParam>, any> {
     

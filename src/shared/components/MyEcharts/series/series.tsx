@@ -2,7 +2,8 @@ import * as React from 'react';
 import * as rx from 'rxjs';
 import { Observable } from 'rxjs';
 import { map, share, takeUntil } from 'rxjs/operators';
-import { EventEmitter, onChanges, onDestroy, onInit, rxcDestroy, RxcInnerComponentProps, RxComponent } from '../../../utils';
+import { EventEmitter } from 'src/shared/utils/EventEmitter';
+import { onChanges, onDestroy, onInit, rxcDestroy, RxcInnerComponentProps, RxComponent } from 'src/shared/utils/RxComponent';
 import { Options } from '../options';
 
 /**
@@ -52,7 +53,10 @@ export interface ISeriesState {
 @RxComponent({
   name: 'Series',
   observer: true,
-  inject: ['chartsInstance', 'optionsTree']
+  inject: ['chartsInstance', 'optionsTree'],
+  render: (props: any) => {
+    return <div />;
+  }
 })
 export class Series extends React.Component<ISeriesProps, ISeriesState> {
   public static getDerivedStateFromProps(nextProps: ISeriesProps, prevState: ISeriesState) {
@@ -94,13 +98,13 @@ export class Series extends React.Component<ISeriesProps, ISeriesState> {
     }
   }
 
-  @onInit() 
+  @onInit()
   public shallow(@rxcDestroy() destroy?: Observable<any>) {
     console.log(destroy)
-    destroy!.subscribe(e=>{
-      console.log('destroy',e);
+    destroy!.subscribe(e => {
+      console.log('destroy', e);
     });
-    console.log('mount',this);
+    console.log('mount', this);
   }
   public componentDidMount(@rxcDestroy() destroy?: Observable<any>) {
     const subject: rx.Observable<ISeriesOption> = rx.merge(
@@ -112,9 +116,9 @@ export class Series extends React.Component<ISeriesProps, ISeriesState> {
       share()
     )
     this.registerTreeOption(subject);
-    subject.subscribe(()=>console.log(this, 'series' + this.name))
+    subject.subscribe(() => console.log(this, 'series' + this.name))
   }
-  
+
   @onChanges('')
   public onChanges(lastProps: ISeriesProps) {
     this.setOption.emit(this.option);
@@ -125,7 +129,7 @@ export class Series extends React.Component<ISeriesProps, ISeriesState> {
   }
   @onDestroy('')
   public rxUnmount(destroy: any): void {
-    console.log(this,'unmount', destroy);
+    console.log(this, 'unmount', destroy);
     this.registerTreeOption(null);
   }
 }

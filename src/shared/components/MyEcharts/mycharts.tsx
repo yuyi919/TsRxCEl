@@ -3,9 +3,10 @@ import { action, computed, observable, toJS } from 'mobx';
 import { Provider } from 'mobx-react';
 import * as React from 'react';
 import * as rx from 'rxjs';
+import { onDestroy, RxcFor, RxcIf, RxComponent } from 'src/shared/utils';
 import { IOptionsTree } from '.';
-import { onDestroy, RxComponent } from '../../utils';
 import { ChartsInstance } from './chartsInstance';
+
 
 export interface IMyEchartsProps {
     className?: string;
@@ -71,16 +72,21 @@ export class Echarts extends React.Component<IMyEchartsProps, any> {
         console.log(this.chartsInstance, this);
     }
 
-    public render() {
+    public render(): any {
         const { style, theme = 'dark', svg = false, children, className } = this.props;
         console.log(this.chartsOption)
         return (
             <React.Fragment>
-                {this.chartsOption && <ReactEcharts className={className} key='renderer' onChartReady={this.onChartsInit}
-                    style={style} option={this.chartsOption}
-                    theme={theme}
-                    opts={{ renderer: svg ? "svg" : "canvas" }}
-                />}
+                <RxcFor objArr={[{children:'test1'},{children:'test2'},{children:'test3'}]}>
+                    <span />
+                </RxcFor>
+                <RxcIf is={this.chartsOption}>
+                    <ReactEcharts className={className} key='renderer' onChartReady={this.onChartsInit}
+                        style={style} option={this.chartsOption}
+                        theme={theme}
+                        opts={{ renderer: svg ? "svg" : "canvas" }}
+                    />
+                </RxcIf>
                 <Provider key='provider' chartsInstance={this.chartsInstance} optionContainer={this}>
                     <>{children}</>
                 </Provider>
