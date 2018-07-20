@@ -1,18 +1,11 @@
 import { ActionRequest } from './Action';
-import { keyName } from './interface';
-
-export const addParamsName = (target: any, propertyName: string) => {
-    const keysList: string[] = Reflect.getMetadata(keyName, target) || [];
-    keysList.push(propertyName);
-    Reflect.defineMetadata(keyName, keysList, target);
-    return keysList;
-}
+import * as Util from './util';
 
 export class Member<T> {
     public name: string;
     private value: T | null = null;
     constructor(target: any, name: string, value?: T) {
-        addParamsName(target, name);
+        Util.addParamsName(target, name);
         this.name = name;
         this.value = value || null;
     }
@@ -32,3 +25,16 @@ export class Member<T> {
         return this.value;
     }
 }
+
+
+export function observable<T = any>(name?: string) {
+    return function member(target: any, propertyName: string) {
+        const self: Member<T> = new Member<T>(target, name || propertyName);
+        Reflect.defineProperty(target, propertyName, {
+            configurable: true,
+            enumerable: true,
+            get: (): T | null => self.getValue(),
+            set: (request: ActionRequest<T> | T | null) => self.setValue(request)
+        })
+    }
+};
