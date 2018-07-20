@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { distinctUntilChanged } from 'rxjs/operators';
 import { EventEmitter } from '../EventEmitter';
 
