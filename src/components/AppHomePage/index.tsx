@@ -23,6 +23,9 @@ class AppHomePage extends React.Component {
   public onClick2 = (e: any) => {
     store.arrAdd(e);
     store.arr = [];
+    setTimeout(()=>{
+      console.log(store.is);
+    },1000);
   }
   public onClick = (e: any) => {
     this.setState({num: this.state.num+1});
