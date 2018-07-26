@@ -1,8 +1,7 @@
 import { app, BrowserWindow, dialog, FileFilter, ipcMain, IpcMessageEvent, OpenDialogOptions } from 'electron';
 import * as superagent from 'superagent';
-import { FileUtil } from './main/file-util';
-import { HttpClient } from './main/http-client';
-import MainWindow from './main/MainWindow';
+import { FileChannel } from './main/EventListener/FileChannel';
+import { FileUtil, HttpClient, MainWindow } from './main/index';
 
 const serve: boolean = process.env.NODE_ENV === 'development';
 
@@ -115,3 +114,6 @@ try {
     // Catch Error
     // throw e;
 }
+
+const channels = new FileChannel();
+console.log(channels);

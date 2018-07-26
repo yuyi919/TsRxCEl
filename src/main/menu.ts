@@ -1,6 +1,22 @@
-import { MenuItem, WebContents } from 'electron';
+import { BrowserWindow, MenuItem } from 'electron';
+import { FileDialog } from './dialog';
 export const main: any = [
     {
+        label: '文件',
+        submenu: [{
+            label: '打开',
+            accelerator: 'CmdOrCtrl+Z', 
+            click: (item: MenuItem, focusedWindow: BrowserWindow) => {
+                new FileDialog().openFile('打开').subscribe((value: string)=>{
+                    console.log(value);
+                });
+            }
+        }, {
+            label: '输出',
+            accelerator: 'CmdOrCtrl+X',
+            role: 'cut'
+        }]
+    }, {
         label: '编辑',
         submenu: [{
             label: '撤销',
@@ -30,7 +46,7 @@ export const main: any = [
                     return 'F11'
                 }
             })(),
-            click: (item: any, focusedWindow: any) => {
+            click: (item: MenuItem, focusedWindow: BrowserWindow) => {
                 if (focusedWindow) {
                     focusedWindow.setFullScreen(!focusedWindow.isFullScreen())
                 }
@@ -44,10 +60,10 @@ export const main: any = [
                     return 'Ctrl+Shift+I'
                 }
             })(),
-            click: (item: MenuItem, focusedWindow: WebContents) => {
+            click: (item: MenuItem, focusedWindow: BrowserWindow) => {
                 if (focusedWindow) {
-                    focusedWindow.toggleDevTools()
-                    focusedWindow.reload()
+                    focusedWindow.webContents.toggleDevTools()
+                    focusedWindow.webContents.reload()
                 }
             }
         }, {
@@ -59,7 +75,7 @@ export const main: any = [
         submenu: [{
             label: '重载',
             accelerator: 'F5',
-            click: (item: MenuItem, focusedWindow: WebContents) => {
+            click: (item: MenuItem, focusedWindow: BrowserWindow) => {
                 if (focusedWindow) {
                     focusedWindow.reload()
                 }
@@ -67,9 +83,9 @@ export const main: any = [
         }, {
             label: '强制重载',
             accelerator: 'alt+F5',
-            click: (item: MenuItem, focusedWindow: WebContents) => {
+            click: (item: MenuItem, focusedWindow: BrowserWindow) => {
                 if (focusedWindow) {
-                    focusedWindow.reloadIgnoringCache();
+                    focusedWindow.webContents.reloadIgnoringCache();
                 }
             }
         }, {

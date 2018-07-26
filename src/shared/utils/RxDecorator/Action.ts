@@ -1,5 +1,5 @@
-import produce from 'immer';
-import * as Util from './util';
+import produce, { setAutoFreeze } from 'immer';
+import { getMembers } from './Member';
 
 export class ActionRequest<T> {
     public value: T;
@@ -9,13 +9,13 @@ export class ActionRequest<T> {
         this.actionName = actionName;
     }
 }
-
-/**
+setAutoFreeze(false);
+/** 
  * 动作
  * @param actionName 动作别名
  */
 export function action<T = any>(actionName?: string) {
-    return (target: any, propertyName: string, descriptor: any) => {
+    return (target: any, propertyName: string, descriptor: PropertyDescriptor) => {
         if (!propertyName) {
             throw new Error('this decorator must be used for class property');
         }   // 必须用于类属性，如果作用于class或其他不会有name参数
@@ -27,21 +27,21 @@ export function action<T = any>(actionName?: string) {
         descriptor.value = function (...args: any[]) {
             if (target.isPrototypeOf(this)) {
                 if (!this.hasOwnProperty('constructor')) {
-                    const keysList: string[] = Util.getMemberNames(target);
-                    const handler: any = this;
-                    const base: any = Util.getTargetMember(handler, keysList, this);
-                    console.log(base);
-                    const after: any = produce(base, (draftHandler: any) => {
+                    const handler: Interface.IPrototype = this as any;
+                    const members = getMembers(handler);
+                    const innerInstance: any = members.getInnerInstance();
+                    console.log(innerInstance);
+                    const after: any = produce(innerInstance, (draftHandler: any) => {
                         result = Reflect.apply(render, draftHandler, args);
                     });
-                    keysList.forEach((key: string) => {
-                        if (after[key] != base[key]) {
+                    Object.keys(innerInstance).forEach((key: string) => {
+                        if (after[key] != innerInstance[key]) {
                             const request = new ActionRequest<T>(after[key], actionName || propertyName);
                             console.log(key)
                             handler[key] = request;
                         }
                     })
-                    console.info(after, base, after == base)
+                    console.info(after, innerInstance, after == innerInstance)
                     return result;
                 }
             }

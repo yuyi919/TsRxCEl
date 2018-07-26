@@ -1,41 +1,50 @@
 import { EventEmitter } from '../EventEmitter';
-import { getPropertyMember, Member } from './Member';
-import * as Util from './util';
+import { ActionRequest } from './Action';
+import { getMembers, Member } from './Member';
 
 // console.warn = () => { };
-export class GuideProxy<T> {
+/**
+ * 代理整个类的实例
+ */
+export class GuideProxy<T extends object> {
+    public members: Member<T>;
     private root: string[];
-    private proxy: any;
+    private proxy: T;
     private onDestroy: EventEmitter<any> = new EventEmitter<any>();
-    private lastValue: T;
     private rootMap: Map<string, Array<string>> = new Map<string, Array<string>>();
-    constructor(instance: any) {
+    private willUpdate: boolean = true;
+    constructor(instance: Interface.IPrototype) {
         this.init();
+        this.members = getMembers(instance);
         this.proxy = this.getGuideProxy(instance);
+        console.log(this.proxy);
     }
-    public init(){
+    public init() {
         this.root = ['this'];
     }
-    public setRootTree(){
+    public clipRootTree() {
+        console.log(this.root);
         this.rootMap.set(this.root[1], this.root);
         this.init();
     }
-    public getRootTree(){
+    public getRootTree() {
         return this.rootMap;
     }
-    public getRoot(){
+    public getRootStr() {
         return this.root.join('=>')
     }
-    public addRoot(root: string){
+    public addRoot(root: string) {
         this.root.push(root);
     }
-    public run(method: any, change?: boolean){
-        if(change){
-            const r: T = Reflect.apply(method, this.proxy, [])
-            this.lastValue = r;
+    public run(method: any, propertyName: string) {
+        if (this.willUpdate) {
+            const r: T = Reflect.apply(method, this.proxy, []);
+            const request: ActionRequest<T> = new ActionRequest(r, 'computed: ' + this.members.getMemberName(propertyName))
+            this.members.setValue(request, propertyName);
+            // this.willUpdate = false;
             return r;
         }
-        return this.lastValue;
+        return this.members.getMemberValue(propertyName);
     }
     /**
      * 代理类成员的get成员
@@ -43,18 +52,21 @@ export class GuideProxy<T> {
      * @param keyName 
      * @param receiver 
      */
-    private getGuideProxy(property: any): { proxy: any, revoke: () => void } {
-        console.warn(`代理了${this.getRoot()}`, property)
-        const { proxy, revoke } = Proxy.revocable(property, {
+    private getGuideProxy(target: Interface.IPrototype): T {
+        console.warn(`代理了${this.getRootStr()}`, target)
+        const { proxy, revoke } = Proxy.revocable(target, {
             get: (innerTarget: any, keyName: string, receiver: any) => {
                 // 如果想要获取方法
                 const member = Reflect.get(innerTarget, keyName, receiver);
+                if((member instanceof Member) || (member instanceof GuideProxy)){ // 对Member对象放行
+                    return member;
+                }
                 // console.warn(`得到 ${this.getRoot()}[${keyName}]:`, member);
                 const descriptor = Reflect.getOwnPropertyDescriptor(innerTarget, keyName);
                 if (descriptor && descriptor.writable == false) { // 如果已被封锁，直接返回即可
                 } else if (member instanceof Function) {
                     const { proxy: proxy2, revoke: revoke2 } = Proxy.revocable(member, {
-                        apply: () => console.error(`无法调用 ${this.getRoot()}[${keyName}]方法`) // 拦截一切调用
+                        apply: () => console.error(`无法调用 ${this.getRootStr()}[${keyName}]方法`) // 拦截一切调用
                     })
                     this.onDestroy.subscribe(revoke2);
                     return proxy2;
@@ -62,43 +74,63 @@ export class GuideProxy<T> {
                     this.addRoot(keyName);
                     return this.getGuideProxy(member);
                 }
-                console.warn(`直接返回 ${this.getRoot()}[${keyName}]:`, member);
                 this.addRoot(keyName);
-                this.setRootTree();
+                console.warn(`直接返回 ${this.getRootStr()}[${keyName}]:`, member, this.root);
+                this.clipRootTree();
                 return member;
             },
             set: (innerTarget: any, keyName: string, value: any, receiver: any): any => {
-                const m = getPropertyMember(innerTarget, keyName);
-                if (m) {
-                    console.error(`无法为 ${this.getRoot()}[${keyName}]赋值:`, value);
-                    return Reflect.get(innerTarget, keyName, receiver);
+                // 取得当前对象内 [ keyName ] 的值
+                // 如果是引用类成员的值，禁止修改
+                const innerValue = Reflect.get(innerTarget, keyName, receiver); 
+                if (this.members.isPropertyMember(innerValue)) {
+                    console.error(`无法为 ${this.getRootStr()}[${keyName}]赋值:`, value);
+                    return innerValue;
                 }
                 return value;
             }
         })
-        this.onDestroy.subscribe(revoke);
+        this.onDestroy.subscribe(revoke); 
         return proxy;
     };
 }
-export function computed(...members: string[]) {
-    return (target: any, propertyName: string, descriptor: any) => {
-        let guideProxy: GuideProxy<any> | null = null;
-        const self = new Member(target, propertyName);
-        self.setComputed(true);
 
-        console.warn(members, Util.getMembers(target), descriptor.get);
-        const computedGet = descriptor.get;
+export function computed<T extends object>(subName?: string, ...members: string[]): Type.Function {
+    return (target: Type.Prototype, propertyName: string, descriptor: PropertyDescriptor) => {
         if (!descriptor.get || descriptor.value || descriptor.set) {
             throw new Error(`@computed只适用于@get访问器, [${target.constructor.name}.${propertyName} ]不适用`)
         }
-
-        descriptor.get = function () {
-            if (!guideProxy) {
-                guideProxy = new GuideProxy(this);
+        let computedGet: Type.Function = descriptor.get;
+        console.log(target, getMembers(target), computedGet);
+        Object.assign(descriptor,{
+            get(): any {
+                const instance: Interface.IPrototype = (this as any);
+                computedGet = computedGet.bind(instance);
+                console.log(instance, target);
+                let guideProxy: GuideProxy<T> = getGuideProxy(instance);
+                if(!guideProxy){
+                    guideProxy = setGuideProxy(instance);
+                }
+                if(!guideProxy.members.hasProperty(propertyName)){
+                    console.log(propertyName);
+                    guideProxy.members.addMember(propertyName, true, subName);
+                }
+                console.log(instance, propertyName, guideProxy.getRootTree());
+                return guideProxy.run(computedGet, propertyName);
             }
-            console.log(propertyName, guideProxy.getRootTree());
-            return guideProxy.run(computedGet, true);
-            // return Reflect.apply(computedGet, this, []);
-        }
+        });
     }
+}
+
+export function getGuideProxy(target: Interface.IPrototype): GuideProxy<any>{
+    return Reflect.get(target, '$$guideProxy');
+}
+export function setGuideProxy(target: Interface.IPrototype){
+    const guideProxy: GuideProxy<any> = new GuideProxy(target);
+    Reflect.defineProperty(target, '$$guideProxy', {
+        writable: false,
+        enumerable: false,
+        value: guideProxy
+    })
+    return guideProxy;
 }

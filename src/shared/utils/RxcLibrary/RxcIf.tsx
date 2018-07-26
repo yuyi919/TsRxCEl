@@ -1,5 +1,4 @@
 import * as equal from 'fast-deep-equal';
-import produce from 'immer';
 import * as React from 'react';
 import { Observable, Subscription } from 'rxjs';
 
@@ -33,12 +32,6 @@ export class RxcIf<T = controlValue> extends React.Component<IRxcIfProps<T>> {
     }
     public componentDidMount() {
         this.setListener(this.props);
-        const test = [[1,2,3,4,5]];
-        const test2 = produce(test, (state)=>{
-            state[0].push(6);
-        });
-        console.log(test,test2,test==test2);
-        (window as any).produce = produce;
     }
     public shouldComponentUpdate(nextProps: IRxcIfProps<T>) {
         if (nextProps.is != this.props.is) { // is不一必然更新

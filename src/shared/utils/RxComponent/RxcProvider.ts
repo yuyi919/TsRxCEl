@@ -7,31 +7,28 @@ import { IRxcEvent, RxComponentBasic } from './RxComponentBasic';
 
 
 export class RxComponentProvider {
-    /** 底层事件发射器
-     */
+    /** 底层事件发射器 */
     public RxcEventEmitter: EventEmitter<IRxcEvent>;
-    /** 销毁触发器
-     */
+    /** 销毁触发器 */
     public onDispose: EventEmitter<boolean> = new EventEmitter<boolean>();
-    /** 高级RxcEvent触发器提供者
-     */
+    /** 高级RxcEvent触发器提供者 */
     public rxEventProvider: RxcEventGroup = new Map<RxcEventType, any>();
-    /** 已注册的component实例和对应的RxcEvent触发器集合
-     */
+    /** 已注册的component实例和对应的RxcEvent触发器集合 */
     public rxcAndEventMap: Map<RxComponentBasic, RxcEventGroup> = new Map<RxComponentBasic, RxcEventGroup>();
 
-    /** 初始化基础事件发射器
+    /** 
+     * 初始化基础事件发射器
      */
     constructor() {
         // 初始化底层事件发射器
         this.RxcEventEmitter = new EventEmitter<IRxcEvent>().takeUntil(this.onDispose);
-        
+
         rxcEventTypes.forEach((type: RxcEventType) => {
             this.rxEventProvider.set(type, this.registerRxcEvent(type)); // 遍历注册高级事件触发器
         })
     }
 
-    /**发射事件
+    /** 发射事件
      * @param type 事件类型
      * @param instance 所属component的实例
      * @param ...args 参数
@@ -80,9 +77,9 @@ export class RxComponentProvider {
     public registerRxEventEmitter(type: RxcEventType, instance: RxComponentBasic, func: () => {}): void {
         this.getRxEventEmitter(type, instance).subscribe(func);
     }
-    public removeEventListener(instance: RxComponentBasic){
+    public removeEventListener(instance: RxComponentBasic) {
         const events = this.rxcAndEventMap.get(instance);
-        if(events){ 
+        if (events) {
             events.clear();
         }
         this.rxcAndEventMap.delete(instance);
@@ -109,14 +106,13 @@ export class RxComponentProvider {
     /** 将底层事件流转化为高层事件流
      * @param input 底层流
      */
-    private toFinalEventOutput(input: Rx.Observable<IRxcEvent>, instance?: RxComponentBasic, dispose?:  Rx.Observable<any>, type?: RxcEventType): Rx.Observable<RxcNativeEvent> {
-        Rx.from(input)
+    private toFinalEventOutput(input: Rx.Observable<IRxcEvent>, instance?: RxComponentBasic, dispose?: Rx.Observable<any>, type?: RxcEventType): Rx.Observable<RxcNativeEvent> {
         return Rx.from(input).pipe(
             takeUntil(this.onDispose),
-            filter((e: IRxcEvent)=>instance?(e.instance==instance):true), // 判断是否是对象组件
-            dispose?takeUntil(dispose):take(1),
-            tap((e: IRxcEvent)=>console.log(e.instance,RxcEventType[e.type])),
-            map((e: IRxcEvent)=>new RxcNativeEvent(e)),
+            filter((e: IRxcEvent) => instance ? (e.instance == instance) : true), // 判断是否是对象组件
+            dispose ? takeUntil(dispose) : take(1),
+            tap((e: IRxcEvent) => console.log(e.instance, RxcEventType[e.type])),
+            map((e: IRxcEvent) => new RxcNativeEvent(e)),
             share()
         )
     }

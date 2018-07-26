@@ -11,7 +11,7 @@ const getCenterWindow = (screensize: Size, windowSize: Size) => {
         height: windowSize.height
     }
 }
-export default class MainWindow {
+export class MainWindow {
     public win: BrowserWindow | null;
 
     public development: boolean;
@@ -32,12 +32,12 @@ export default class MainWindow {
     
         if (this.development) {
             require('electron-reload')(__dirname, {
-                electron: require(path.join(__dirname, `../node_modules/electron`))
+                electron: require(path.join(__dirname, `../../node_modules/electron`))
             });
             this.win.loadURL('http://localhost:3000/');
         } else {
             this.win.loadURL(url.format({
-                pathname: path.join(__dirname, '../build/index.html'),
+                pathname: path.join(__dirname, '../../build/index.html'),
                 protocol: 'file:',
                 slashes: true
             }));

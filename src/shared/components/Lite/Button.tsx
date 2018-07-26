@@ -14,13 +14,14 @@ export interface ILiteButtonProps extends ButtonProps {
     leftIcon?: React.ComponentType<Svg.SvgIconProps>;
     rightIcon?: React.ComponentType<Svg.SvgIconProps>;
 }
+
 const Lite = ({
-    icon,leftIcon,rightIcon,text,
+    icon, leftIcon, rightIcon, text,
     type = 'contained', color = 'default',
-    routerLink, children, 
-    component,...other
+    routerLink, children,
+    component, ...other
 }: ILiteButtonProps) => {
-    const LiteLink = (props: any)=> <Link to={routerLink} {...props} />
+    const LiteLink = (props: any) => <Link to={routerLink} {...props} />
     return (
         <Button variant={type} component={LiteLink} color={color} {...other}>
             {icon || leftIcon}
@@ -30,7 +31,7 @@ const Lite = ({
         </Button>
     );
 };
-;
+
 /**
  * @param routerLink 导航链接
  * @param type 按钮类型 
@@ -38,6 +39,6 @@ const Lite = ({
  * @param size 尺寸
  * @param fullWidth If true, the button will take up the full width of its container.
  */
-export const LiteButton: React.ComponentClass<ILiteButtonProps> = (withTheme()(Lite));
+export const LiteButton = withTheme()(Lite);
 
 export default LiteButton;

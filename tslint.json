@@ -16,6 +16,11 @@
     "object-literal-sort-keys": [false],
     "array-type": [false],
     "triple-equals": [false],
-    "no-var-requires": [false]
+    "no-var-requires": [false],
+    "no-namespace": [
+      false
+    ],
+    //"no-unsafe-any": [true],
+    "no-arg": [true]
   }
 }
