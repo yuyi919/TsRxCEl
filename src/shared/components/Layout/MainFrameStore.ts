@@ -43,7 +43,7 @@ export class MainFrameStore {
     @action public onItemClick = (e: Lite.IMenuItemConfig, parentIndexList: Array<number>) => {
         let current: Lite.IMenuItemConfig[] = this.menuList;
         let currentItem: Lite.IMenuItemConfig | null = null;
-        console.log("start", parentIndexList)
+        // console.log("start", toJS(current))
         for (const i of parentIndexList) {
             currentItem = current[i]
             // console.log(toJS(currentItem))
@@ -59,7 +59,7 @@ export class MainFrameStore {
             this.content = (currentItem as any).content || [];
             this.title = currentItem.title;
         }
-        console.log("end", currentItem)
+        // console.log("end", toJS(this.menuList))
     }
 
     @action public openHandler = () => {
