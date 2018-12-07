@@ -1,23 +1,28 @@
+import { FileFilter } from 'electron';
 import { Observable } from 'rxjs';
 import { FileDialog } from '../dialog';
 import { channel, IpcListener } from './index';
 export interface IResponse {
     text: string;
 }
+export interface IOpenFile {
+    title?: string;
+    filter?: FileFilter[] | FileFilter;
+    encode?: string;
+}
+
 @IpcListener
 export class FileChannel {
-    
-
     @channel<IResponse, string>('go')
     public go1(response: IResponse) {
         console.log('receive', response);
         return 'failed!';
     }
 
-    @channel<string, Observable<string>>('load')
-    public readFile(response: string) {
-        console.log('receive', response);
-        return new FileDialog().openFile('打开', response)
+    @channel<IOpenFile, Observable<string>>('load')
+    public readFile({title,filter,encode}: IOpenFile) {
+        console.log('receive', title, filter, encode);
+        return new FileDialog().setFilters(filter).openFile(title || '打开', encode)
     }
 
     // @channel<IResponse, string>('go')

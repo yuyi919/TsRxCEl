@@ -2,23 +2,19 @@
 // import List from '@material-ui/core/List';
 // import { Container } from './container';
 // import HttpService from 'src/shared/clientApi/http';
-import { toJS } from 'mobx';
-import { Provider } from 'mobx-react';
+import { TextField } from '@material-ui/core';
 import * as React from 'react';
-import Store, { MainFrame, MainFrameStore } from 'src/shared/components/Layout';
-import AulUtilPage from './AulUtilPage';
 
-export interface IIndexProps {
+export interface IAulUtilProps {
     children?: React.ReactNode | React.ReactNodeArray;
-    store?: MainFrameStore;
 }
 
-export interface IIndexState {
+export interface IAulUtilState {
     [key: string]: any;
 }
 
-export default class IndexPage extends React.Component<IIndexProps, IIndexState> {
-    constructor(props: IIndexProps) {
+export default class AulUtilPage extends React.Component<IAulUtilProps, IAulUtilState> {
+    constructor(props: IAulUtilProps) {
         super(props);
         this.state = {
             show: true,
@@ -27,7 +23,7 @@ export default class IndexPage extends React.Component<IIndexProps, IIndexState>
         }
     }
     public componentDidMount() {
-        console.log(toJS(Store))
+        console.log("load")
     }
     public onClick = () => {
         this.setState({ show: !this.state.show });
@@ -43,18 +39,28 @@ export default class IndexPage extends React.Component<IIndexProps, IIndexState>
     public onBlur = () => this.setState({ focus: false })
 
     public render() {
-        const { children } = this.props;
         // const { value, focus } = this.state;
         return (
-            <Provider store={Store}>
-                <MainFrame><AulUtilPage />{children}</MainFrame>
-                {/* <input value={value || (focus ? "" : "default")} onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
-                <Container>
-                    <div>
-                        <LiteButton type='contained' routerLink='/' onClick={this.onClick}> {this.state.show ? 'block' : 'none'} </LiteButton>
-                    </div>
-                </Container> */}
-            </Provider>
+            <>
+                <TextField 
+                    id="standard-name"
+                    label="路径1"
+                    placeholder="请选择"
+                    // className={classes.textField}
+                    // value={this.state.name}
+                    // onChange={this.handleChange('name')}
+                    margin="normal"
+                />
+                <TextField 
+                    id="standard-name"
+                    label="路径2"
+                    placeholder="请选择"
+                    // className={classes.textField}
+                    // value={this.state.name}
+                    // onChange={this.handleChange('name')}
+                    margin="normal"
+                />
+            </>
         );
     }
 }

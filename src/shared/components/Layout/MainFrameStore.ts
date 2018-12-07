@@ -1,5 +1,6 @@
 import { action, observable } from 'mobx';
-import { ClientEventEmitter } from 'src/shared/clientApi';
+// import { toJS } from 'mobx';
+import { openTxtFile } from 'src/shared/clientApi';
 import * as Lite from 'src/shared/components/Lite';
 
 export interface ISearchList<T> {
@@ -15,55 +16,81 @@ export class MainFrameStore {
     @observable public drawerWidth: number = 200;
     @observable public content: Array<string> = [];
     @observable public title: string = "";
-    public emit: ClientEventEmitter<any, any>;
+    @observable public selectedTree: Array<number> = [];
     public listTag: Array<string> = ['h1', 'h2', 'h3', 'h4', 'h5'];
-    @observable public menuList: Array<Lite.IMenuItemConfig> = [
-        {
-            title: "menu1", children: [
-                { title: "menu1-1" },
-                {
-                    title: "menu1-2", children: [
-                        { title: "menu2-1" },
-                        { title: "menu2-2" }
-                    ]
-                }
-            ], collapse: true
-        },
-        { title: "menu2" },
-        { title: "menu3" }
-    ];
+    @observable public menuList: Lite.DataListStore<Lite.IMenuItemConfig>;
 
     constructor() {
-        this.emit = new ClientEventEmitter<any, any>('load')
+        this.menuList = new Lite.DataListStore([
+            {
+                title: "menu1", children: [
+                    { title: "menu1-1" },
+                    {
+                        title: "menu1-2", children: [
+                            { title: "menu1-2-1" },
+                            { title: "menu1-2-2" }
+                        ]
+                    }
+                ]
+            },
+            { title: "menu2",children: [
+                { title: "menu2-1" },
+                {
+                    title: "menu2-2", children: [
+                        { title: "menu2-2-1" },
+                        { title: "menu2-2-2" }
+                    ]
+                }
+            ]},
+            { title: "menu3" }
+        ], {onItemClick: this.onItemClick});
     }
 
     @action public toggle = () => {
         this.open = !this.open;
     }
-    @action public onItemClick = (e: Lite.IMenuItemConfig, parentIndexList: Array<number>) => {
-        let current: Lite.IMenuItemConfig[] = this.menuList;
-        let currentItem: Lite.IMenuItemConfig | null = null;
-        // console.log("start", toJS(current))
-        for (const i of parentIndexList) {
-            currentItem = current[i]
-            // console.log(toJS(currentItem))
-            if (currentItem) {
-                current = currentItem.children || []
-            } else {
-                break;
+    @action public onItemClick = (index: number, e: Lite.DataListStore<Lite.IMenuItemConfig>, parentIndexList: Array<number>) => {
+        const currentItem = e.getItem(index)
+        if(currentItem){
+            if(currentItem.children){
+                e.collapse(index)
             }
-        }
-        if (currentItem) {
-            currentItem.collapse = !currentItem.collapse;
-            currentItem.select = true;
+            e.select(index)
             this.content = (currentItem as any).content || [];
             this.title = currentItem.title;
         }
-        // console.log("end", toJS(this.menuList))
+       // console.log(toJS(e),parentIndexList)
+        // let current: Lite.IMenuItemConfig[] = this.menuList.data;
+        // let currentItem: Lite.IMenuItemConfig | null = null;
+        // // console.log("start", toJS(current))
+        // for (const i of parentIndexList) {
+        //     currentItem = current[i]
+        //     // console.log(toJS(currentItem))
+        //     if (currentItem) {
+        //         current = currentItem.children || []
+        //     } else {
+        //         break;
+        //     }
+        // }
+        // if (currentItem) {
+        //     currentItem.collapse = !currentItem.collapse;
+        //     currentItem.selected = true;
+        //     this.content = (currentItem as any).content || [];
+        //     this.title = currentItem.title;
+        // }
+        // if(this.selectedTree.length==0){
+        //     this.selectedTree = parentIndexList
+        // } else {
+        //     parentIndexList.forEach((i,index)=>{
+        //         this.selectedTree[index] = i
+        //     })
+        // }
+        // this.selectedTree = [...parentIndexList];
+        // console.log("end",this.selectedTree, toJS(this.menuList))
     }
 
     @action public openHandler = () => {
-        this.emit.get("binary").subscribe(text => {
+        openTxtFile().subscribe(text => {
             const iconv = require('iconv-lite');
             text = iconv.decode(text, 'gbk')
             const dom = document.createElement("html");
@@ -75,7 +102,7 @@ export class MainFrameStore {
                 rootTitle.forEach((i: Element, index: number) => {
                     menu.push(this.searchTag(i, 0))
                 })
-                this.menuList = (menu as any)
+                this.menuList = new Lite.DataListStore(menu as any, {onItemClick: this.onItemClick});
             }
         })
         // HttpService.getXml('www.baidu.com/s?word=node爬虫',{}).subscribe(response=>{

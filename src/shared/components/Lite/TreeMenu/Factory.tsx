@@ -3,17 +3,20 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import { Theme, withStyles } from '@material-ui/core/styles';
 import { observer } from 'mobx-react';
 import * as React from 'react';
-import { AutoList } from '../AutoList';
-import { Icon } from '../index';
-import { IMenuItemConfig, TreeMenuItem } from './Item';
+import { IAutoListProps, OAutoList } from '../AutoList';
+import { Icon, TreeMenuStore } from '../index';
+import { IMenuItemConfig, ITreeMenuConfig } from './interface';
+import { OTreeMenuItem } from './Item';
+import { DataListStore } from './store';
 
 export interface ITreeMenuProps extends ListProps {
     sheader?: string;
     data?: Array<IMenuItemConfig>;
-    onItemClick: (e: IMenuItemConfig, parentIndexList: Array<number>, nativeEvent: React.MouseEvent) => void;
-    level?: number;
-    parentIndexList?: Array<number>;
 }
+export interface IOTreeItemListProps extends ITreeMenuProps {
+    store: TreeMenuStore;
+}
+
 const styles = (theme: Theme) => {
     return {
         root: {
@@ -22,11 +25,11 @@ const styles = (theme: Theme) => {
             backgroundColor: theme.palette.background.paper,
         },
         nested1: {
-            paddingLeft: theme.spacing.unit * 1,
+            paddingLeft: theme.spacing.unit * 2,
             fontSize: 20
         },
         nested2: {
-            paddingLeft: theme.spacing.unit * 2,
+            paddingLeft: theme.spacing.unit * 2.5,
             fontSize: 15
         },
         nested3: {
@@ -34,41 +37,83 @@ const styles = (theme: Theme) => {
             fontSize: 12
         },
         nested4: {
-            paddingLeft: theme.spacing.unit * 4,
+            paddingLeft: theme.spacing.unit * 3.5,
             fontSize: 10
         },
     }
 };
 
+export const TreeMenuItemCollapseIcon = observer(({ store, index }: { store: TreeMenuStore, index: number }) => {
+    if (store.hasChildren(index, (config: IMenuItemConfig) => config.children != null)) {
+        return store.isCollapse(index) ? <Icon.ExpandLess /> : <Icon.ExpandMore />
+    }
+    return null;
+})
+
+export interface IOListProps extends ListProps {
+    sheader?: string;
+}
+export const OList = observer(({ sheader, children, ...other }: IOListProps) => {
+    return (
+        <List component="nav" subheader={sheader ? <ListSubheader component="h1">{sheader}</ListSubheader> : undefined} {...other}>
+            {children}
+        </List>
+    )
+})
+export interface IOAutoMenuList extends IAutoListProps {
+    store: TreeMenuStore;
+}
+export const OAutoMenuList = observer(({ store, itemFactory, ...other }: IOAutoMenuList) => {
+    return <OAutoList data={store.data} itemFactory={itemFactory} {...other} />
+})
+
 export const TreeMenuFactory = (container: any) => {
-    const InnerContainer = observer(container)
-    const CTreeMenu = observer(class CMenuItemList extends React.Component<ITreeMenuProps> {
-        public render() {
-            const { data, classes = {}, sheader, onItemClick, level = 0, parentIndexList = [], ...other } = this.props;
-            const getItem = (itemData: IMenuItemConfig, index: number) => {
-                const clickHandler = (e: React.MouseEvent) => onItemClick(itemData, [...parentIndexList, index], e)
-                return (
-                    <React.Fragment key={index} >
-                        <TreeMenuItem
-                            menuIndex={index}
-                            icon={itemData.icon || (itemData.children ? "LibraryBooks" : "Book")}
-                            className={classes["nested" + (level + 1)]!}
-                            title={itemData.title}
-                            onClick={clickHandler}
-                            {...other}
-                        >
-                            {itemData.children && (itemData.collapse ? <Icon.ExpandLess /> : <Icon.ExpandMore />)}
-                        </TreeMenuItem>
-                        <InnerContainer itemData={itemData}>
-                            <CTreeMenu data={itemData.children} onItemClick={onItemClick} level={level + 1} parentIndexList={[...parentIndexList, index]} />
-                        </InnerContainer>
-                    </React.Fragment>
-                );
+    const InnerContainer = observer(container);
+    const CTreeMenu = observer(class OTreeItemList extends React.Component<IOTreeItemListProps, any> {
+        
+        public getChildrenStore = (index: number): TreeMenuStore | null => {
+            const { store } = this.props;
+            if (!store.childrenStore[index]) {
+                const { level = 0, parentIndexList = [], ...other } = store.config;
+                const children = store.getItem(index).children;
+                if (children && children.length > 0) {
+                    const nextConfig = {
+                        ...other,
+                        level: level + 1,
+                        parentIndexList: [...parentIndexList, index]
+                    }
+                    store.childrenStore[index] = new DataListStore<IMenuItemConfig, ITreeMenuConfig>(store.getItem(index).children, nextConfig);
+                }
             }
+            return store.childrenStore[index];
+        }
+        public getItem = (itemData: IMenuItemConfig, index: number) => {
+            const { classes = {}, store } = this.props;
+            const { onItemClick, level = 0, parentIndexList = [] } = store.config;
+            const clickHandler = (e: React.MouseEvent) => onItemClick(index, store, [...parentIndexList, index], e)
+            const nextStore = this.getChildrenStore(index)
             return (
-                <List className={classes.root} component="nav" subheader={sheader ? <ListSubheader component="h1">{sheader}</ListSubheader> : undefined} {...other}>
-                    <AutoList data={data} itemFactory={getItem} />
-                </List>
+                <React.Fragment key={index} >
+                    <OTreeMenuItem
+                        index={index}
+                        store={store}
+                        className={classes["nested" + (level + 1)]!}
+                        onClick={clickHandler}
+                    >
+                        <TreeMenuItemCollapseIcon index={index} store={store} />
+                    </OTreeMenuItem>
+
+                    {nextStore && <InnerContainer index={index} store={store}><CTreeMenu store={nextStore} classes={classes} /></InnerContainer>}
+
+                </React.Fragment>
+            );
+        }
+        public render() {
+            const { classes = {}, sheader, store, ...other } = this.props;
+            return (
+                <OList className={classes.root} sheader={sheader} {...other}>
+                    <OAutoMenuList store={store} itemFactory={this.getItem} />
+                </OList>
             )
         }
     })

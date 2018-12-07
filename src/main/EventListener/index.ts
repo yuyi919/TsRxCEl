@@ -68,7 +68,7 @@ export class IpcEventListener<T = any, S = any> extends Rx.Observable<IpcMessage
     }
 }
 export interface IEventListenClass<T extends object> extends Type.ClassConstructor {
-    new(): {
+    new(...arg:any[]): {
         onDestroy(): void;
     } & T;
 }
@@ -83,7 +83,7 @@ export function IpcListener<T extends object>(target: IEventListenClass<T>): IEv
             const listenerMap: Map<string, IpcEventListener<any>> = new Map<string, IpcEventListener<any>>();
             const instance = Reflect.construct(proxyTarget, args, handler);
             Reflect.get(instance, '$$$listener').forEach((methodList: string[], channelName: string) => {
-                const listener: IpcEventListener<any> = new IpcEventListener<any>(channelName);
+                const listener: IpcEventListener<any> = new IpcEventListener<any>("$$$IPCL_"+channelName);
                 methodList.forEach((methodName: string) => {
                     const method = Reflect.get(instance, methodName, instance);
                     listener.listen((e: IpcMessageResponse<any>) => {
@@ -117,7 +117,13 @@ export function IpcListener<T extends object>(target: IEventListenClass<T>): IEv
 }
 
 export type IChannelMethod<Q, S> = TypedPropertyDescriptor<(response: Q, responseEvent?: IpcMessageEvent) => S>;
-export function channel<Q extends object | string, S = object>(channelName: string) {
+
+/**
+ * @type Q 入参类型
+ * @type S 返回值类型（允许Observable对象）
+ * @param channelName 频道名称
+ */
+export function channel<Q extends object | string | number | boolean, S = object>(channelName: string) {
     return (target: Type.Prototype, prpoertyName: string, descriptor: IChannelMethod<Q, S>) => {
         // 获取或创建channelsMap
         const channels: Map<string, string[]> = Reflect.get(target, '$$$listener') || new Map<string, string[]>();

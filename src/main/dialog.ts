@@ -3,6 +3,7 @@ import * as Rx from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { FileUtil } from './file-util';
 
+
 declare const window: any;
 export type DialogProperties = 'openFile' | 'openDirectory' | 'multiSelections' | 'showHiddenFiles' | 'createDirectory' | 'promptToCreate' | 'noResolveAliases' | 'treatPackageAsDirectory';
 export class FileDialog {
@@ -27,7 +28,7 @@ export class FileDialog {
             properties: Array.from(this.properties)
         }
     }
-    public setFilters(filter?: FileFilter[] | FileFilter) {
+    public setFilters(filter?: FileFilter[] | FileFilter): FileDialog {
         if (filter instanceof Array) {
             this.filters = filter;
         } else {
@@ -36,27 +37,43 @@ export class FileDialog {
                 extensions: ['*']
             }];
         }
+        return this;
     }
-    public openFile(title?: string, encoding?: string): Rx.Observable<any> {
+    /**
+     * 打开窗口取得路径并按路径读取文件内容字符串
+     * @param title 窗口标题
+     * @param encoding 编码
+     */
+    public openFile(title?: string, encoding?: string): Rx.Observable<string> {
         return this.getPaths(title || '打开').pipe(
             mergeMap((path: string) => {
-                if(!path) {
-                    return Rx.of(false)
-                }
                 return this.openFileByPath(path, encoding)
             })
         );
     }
-    public openFileByPath(path: string, encoding?: string): Rx.Observable<any> {
+    /**
+     * 通过路径打开文件
+     * @param path 
+     * @param encoding 
+     * @return Observable();
+     */
+    public openFileByPath(path: string, encoding?: string): Rx.Observable<string> {
         return new FileUtil(path).readFiles(encoding);
     }
+
+    /**
+     * 打开文件窗口，获取一个文件路径
+     * @param title 窗口标题
+     */
     public getPaths(title: string): Rx.Observable<string> {
         return new Rx.Observable<any>((obser: Rx.Observer<string>) => {
             this.dialog.showOpenDialog(this.getOptions(title), (filePath: string[]) => {
-                filePath.forEach((path: string) => {
-                    console.log(path);
-                    obser.next(path);
-                })
+                if(filePath && filePath.length > 0){
+                    for(const path of filePath){
+                        console.log(path);
+                        obser.next(path);
+                    }
+                }
                 obser.complete();
             });
         });

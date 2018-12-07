@@ -1,6 +1,7 @@
 import { BrowserWindow, Menu, screen, Size } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+import { WindowChannel } from './EventListener/WindowChannel';
 import { main as mainMenu } from './menu';
 
 const getCenterWindow = (screensize: Size, windowSize: Size) => {
@@ -8,11 +9,13 @@ const getCenterWindow = (screensize: Size, windowSize: Size) => {
         x: (screensize.width - windowSize.width) / 2,
         y: (screensize.height - windowSize.height) / 2,
         width: windowSize.width,
-        height: windowSize.height
+        height: windowSize.height,
+        frame: false
     }
 }
 export class MainWindow {
     public win: BrowserWindow | null;
+    public service: WindowChannel;
 
     public development: boolean;
     constructor(development: boolean){
@@ -28,6 +31,7 @@ export class MainWindow {
         }
         // Create the browser window.
         this.win = new BrowserWindow(getCenterWindow(screenSize, windowSize));
+        this.service = new WindowChannel(this.win);
         this.win.setAspectRatio(16 / 9, {width:0,height:0});
     
         if (this.development) {

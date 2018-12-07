@@ -6,6 +6,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import classNames from 'classnames';
 import { inject, observer } from 'mobx-react';
 import * as React from 'react';
+import { openAulFile, windowReload } from 'src/shared/clientApi';
 import * as Lite from 'src/shared/components/Lite';
 import { MainFrameStore } from './index';
 
@@ -74,13 +75,24 @@ const styles: StyleRulesCallback<"drawerPaper" | "drawerPaperClose"> = (theme: T
     },
 })
 
-
+const open = () =>{
+    openAulFile().subscribe(text=>{
+        console.log(text);
+    })
+}
+const reload = () =>{
+    windowReload(true).subscribe((re:boolean)=>{
+        console.log(re);
+    })
+}
 export const MainFrame = withStyles(styles)(inject("store")(observer((props: IMainFrameProps) => {
     const { children, store = {}, classes = {} } = props;
     return (
         <div className={classes.root}>
             <Lite.TopBar title={store.title} position='absolute' icon={<MenuIcon onClick={store.toggle} />} className={classNames(classes.appBar, store.open && classes.appBarShift)}>
-                <Lite.LiteButton type='text' routerLink='/' onClick={store.openHandler}>打开文件</Lite.LiteButton>
+                <Lite.LiteButton type='text' routerLink='/' onClick={reload}>重载</Lite.LiteButton>
+                <Lite.LiteButton type='text' routerLink='/' onClick={open}>打开exo文件</Lite.LiteButton>
+                <Lite.LiteButton type='text' routerLink='/' onClick={store.openHandler}>打开txt文件</Lite.LiteButton>
             </Lite.TopBar>
             <Drawer
                 variant="permanent"
@@ -90,7 +102,7 @@ export const MainFrame = withStyles(styles)(inject("store")(observer((props: IMa
                 anchor="left"
             >
                 <div className={classes.toolbar} />
-                <Lite.CollapseMenu data={store.menuList} onItemClick={store.onItemClick} />
+                <Lite.CollapseMenu index={0} store={store.menuList} />
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.toolbar} />

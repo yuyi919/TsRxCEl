@@ -1,7 +1,7 @@
-import { app, BrowserWindow, dialog, FileFilter, ipcMain, IpcMessageEvent, OpenDialogOptions } from 'electron';
+import { app, BrowserWindow, ipcMain, IpcMessageEvent } from 'electron';
 import * as superagent from 'superagent';
 import { FileChannel } from './main/EventListener/FileChannel';
-import { FileUtil, HttpClient, MainWindow } from './main/index';
+import { HttpClient, MainWindow } from './main/index';
 
 const serve: boolean = process.env.NODE_ENV === 'development';
 
@@ -12,9 +12,6 @@ if (process.env.NODE_ENV === 'production') {
 
 if (process.env.NODE_ENV === 'development') {
     require('electron-debug')(); // eslint-disable-line global-require
-
-
-    console.log('debug');
     const path = require('path'); // eslint-disable-line
     const p = path.join(__dirname, '..', 'app', 'node_modules'); // eslint-disable-line
     require('module').globalPaths.push(p); // eslint-disable-line
@@ -88,27 +85,6 @@ try {
             event.sender.send(e);
         }
     })
-
-    ipcMain.on('openFile', (event: IpcMessageEvent, ...args: any[]) => {
-        console.log(event, args);
-        const exoFilter: FileFilter = {
-            name: "EXO",
-            extensions: ["exo"]
-        };
-        const options: OpenDialogOptions = {
-            title: "test",
-            filters: [exoFilter]
-        };
-        dialog.showOpenDialog(options, (filePath: string[]) => {
-            filePath.forEach((path: string) => {
-                console.log(path);
-                new FileUtil(path).read().then(result => {
-                    event.returnValue = result;
-                });
-            })
-        });
-    });
-
 
 } catch (e) {
     // Catch Error

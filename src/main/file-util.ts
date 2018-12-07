@@ -1,6 +1,9 @@
 //  { ReadLine } from 'readline'; 
 import * as fs from 'fs';
-import * as Rx from 'rxjs';
+import { Observable, Observer } from "rxjs";
+import { map } from "rxjs/operators";
+
+const iconv = require('iconv-lite');
 
 export class FileUtil {
     public path: string;
@@ -41,7 +44,7 @@ export class FileUtil {
         })
     }
     public getDirFiles() {
-        return new Rx.Observable<string>((observer: Rx.Observer<string>) => {
+        return new Observable<string>((observer: Observer<string>) => {
             fs.readdir(this.path, 'utf8', (err: NodeJS.ErrnoException, files: string[]) => {
                 if (err) {
                     observer.error(err);
@@ -52,9 +55,9 @@ export class FileUtil {
             })
         })
     }
-    public readFiles(endocingName = 'utf8'): Rx.Observable<string> {
-        return new Rx.Observable<string>((observer: Rx.Observer<string>) => {
-            fs.readFile(this.path, endocingName, function (err: NodeJS.ErrnoException, text: string) {
+    public readFiles(endocingName = 'utf8'): Observable<string> {
+        return new Observable<string>((observer: Observer<string>) => {
+            fs.readFile(this.path, "binary", function (err: NodeJS.ErrnoException, text: string) {
                 if (err) {
                     observer.error(err);
                 } else {
@@ -62,7 +65,9 @@ export class FileUtil {
                 }
                 observer.complete();
             });
-        })
+        }).pipe(
+            map((text:string) => iconv.decode(text, endocingName))
+        )
             
     }
     public writeTextFile(text: string) {
