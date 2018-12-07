@@ -3,6 +3,7 @@ import { BrowserWindow, screen, Size } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import { WindowChannel } from './EventListener/WindowChannel';
+// import { execFile } from 'child_process';
 // import { main as mainMenu } from './menu';
 
 const getCenterWindow = (screensize: Size, windowSize: Size) => {

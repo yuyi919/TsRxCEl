@@ -1,7 +1,7 @@
-import { app, BrowserWindow, ipcMain, IpcMessageEvent } from 'electron';
+import { ipcMain, IpcMessageEvent } from 'electron';
 import * as superagent from 'superagent';
-import { FileChannel } from './main/EventListener/FileChannel';
-import { HttpClient, MainWindow } from './main/index';
+import { WindowManager } from './main/EventListener/WindowManager';
+import { HttpClient } from './main/index';
 
 const serve: boolean = process.env.NODE_ENV === 'development';
 
@@ -17,41 +17,10 @@ if (process.env.NODE_ENV === 'development') {
     require('module').globalPaths.push(p); // eslint-disable-line
 }
 
-const mainWindow = new MainWindow(serve);
-let win: BrowserWindow | null | undefined = null;
+const windowManager: WindowManager = new WindowManager(serve);
 
 try {
-
-    // This method will be called when Electron has finished
-    // initialization and is ready to create browser windows.
-    // Some APIs can only be used after this event occurs.
-    app.on('ready', () => {
-        if (win === null) {
-            console.log("Dev Server Starting");
-            win = mainWindow.create();
-        }
-        // win.webContents.openDevTools();
-        // require('electron-react-devtools').install();
-    });
-
-    // Quit when all windows are closed.
-    app.on('window-all-closed', () => {
-        // On OS X it is common for applications and their menu bar
-        // to stay active until the user quits explicitly with Cmd + Q
-        // if (process.platform !== 'darwin') {
-        //     app.quit();
-        // }
-        app.quit();
-    });
-
-    app.on('activate', () => {
-        // On OS X it's common to re-create a window in the app when the
-        // dock icon is clicked and there are no other windows open.
-        if (win === null) {
-            win = mainWindow.create();
-        }
-    });
-
+    windowManager.process();
     let http: HttpClient;
     ipcMain.on('http-get', (event: IpcMessageEvent, url: string, param?: object, ...args: any[]) => {
         superagent.get(encodeURI(url)).end((err: any, res: any) => {
@@ -61,6 +30,8 @@ try {
             event.sender.send('http-get', res.text);
         });
     })
+
+
     ipcMain.on('get', (event: IpcMessageEvent, url: string, param?: object, ...args: any[]) => {
         try {
             if (!http) {
@@ -94,6 +65,3 @@ try {
     // Catch Error
     // throw e;
 }
-
-const channels = new FileChannel();
-console.log(channels);

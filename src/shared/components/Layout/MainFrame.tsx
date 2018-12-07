@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import { inject, observer } from 'mobx-react';
 import * as React from 'react';
 import { FileDialog } from 'src/main/dialog';
-import { openAulFile, windowReload } from 'src/shared/clientApi';
+import { openAulFile, windowReCreate, windowReload } from 'src/shared/clientApi';
 import * as Lite from 'src/shared/components/Lite';
 import { MainFrameStore } from './index';
 
@@ -87,6 +87,11 @@ const open = () =>{
         console.log(text);
     })
 }
+const recreate = () =>{
+    windowReCreate(true).subscribe((re:boolean)=>{
+        console.log(re);
+    })
+}
 const reload = () =>{
     windowReload(true).subscribe((re:boolean)=>{
         console.log(re);
@@ -97,6 +102,7 @@ export const MainFrame = withStyles(styles)(inject("store")(observer((props: IMa
     return (
         <div className={classes.root}>
             <Lite.TopBar title={store.title} position='absolute' icon={<MenuIcon onClick={store.toggle} />} className={classNames(classes.appBar, store.open && classes.appBarShift)}>
+                <Lite.LiteButton type='text' routerLink='/' onClick={recreate}>重启</Lite.LiteButton>
                 <Lite.LiteButton type='text' routerLink='/' onClick={reload}>重载</Lite.LiteButton>
                 <Lite.LiteButton type='text' routerLink='/' onClick={getPath}>选择文件路径</Lite.LiteButton>
                 <Lite.LiteButton type='text' routerLink='/' onClick={open}>打开exo文件</Lite.LiteButton>

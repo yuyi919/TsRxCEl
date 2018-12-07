@@ -1,5 +1,6 @@
 import { IpcMessageEvent, IpcRenderer } from 'electron';
 import * as Rx from 'rxjs';
+import { share } from 'rxjs/operators';
 
 let ipcRenderer: IpcRenderer | any;
 try{
@@ -27,8 +28,10 @@ export class ClientEventEmitter<A, R> extends Rx.Observable<R> {
         this.channelName = "$$$IPCL_"+channelName;
         this.source = new Rx.Observable((observer: Rx.Observer<R>) => {
             this.observer = observer;
-            console.log(this)
-        })
+            console.log(this);
+        }).pipe(
+            share()
+        )
         if(ipcRenderer){
             ipcRenderer.on(this.channelName, this.onResponse)
         }
