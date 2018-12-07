@@ -1,4 +1,3 @@
-
 import Drawer from '@material-ui/core/Drawer';
 import { StyledComponentProps, StyleRulesCallback, Theme, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -6,6 +5,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import classNames from 'classnames';
 import { inject, observer } from 'mobx-react';
 import * as React from 'react';
+import { FileDialog } from 'src/main/dialog';
 import { openAulFile, windowReload } from 'src/shared/clientApi';
 import * as Lite from 'src/shared/components/Lite';
 import { MainFrameStore } from './index';
@@ -75,6 +75,13 @@ const styles: StyleRulesCallback<"drawerPaper" | "drawerPaperClose"> = (theme: T
     },
 })
 
+const getPath = () => {
+    const file: FileDialog = new FileDialog(true);
+    file.openFile("a").subscribe((path: boolean)=>{
+        console.log(path);
+    })
+}
+
 const open = () =>{
     openAulFile().subscribe(text=>{
         console.log(text);
@@ -91,6 +98,7 @@ export const MainFrame = withStyles(styles)(inject("store")(observer((props: IMa
         <div className={classes.root}>
             <Lite.TopBar title={store.title} position='absolute' icon={<MenuIcon onClick={store.toggle} />} className={classNames(classes.appBar, store.open && classes.appBarShift)}>
                 <Lite.LiteButton type='text' routerLink='/' onClick={reload}>重载</Lite.LiteButton>
+                <Lite.LiteButton type='text' routerLink='/' onClick={getPath}>选择文件路径</Lite.LiteButton>
                 <Lite.LiteButton type='text' routerLink='/' onClick={open}>打开exo文件</Lite.LiteButton>
                 <Lite.LiteButton type='text' routerLink='/' onClick={store.openHandler}>打开txt文件</Lite.LiteButton>
             </Lite.TopBar>

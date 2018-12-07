@@ -7,7 +7,7 @@ export const main: any = [
             label: '打开',
             accelerator: 'CmdOrCtrl+Z', 
             click: (item: MenuItem, focusedWindow: BrowserWindow) => {
-                new FileDialog().openFile('打开').subscribe((value: string)=>{
+                new FileDialog().readFile('打开').subscribe((value: string)=>{
                     console.log(value);
                 });
             }

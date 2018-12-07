@@ -26,8 +26,11 @@ try {
     // initialization and is ready to create browser windows.
     // Some APIs can only be used after this event occurs.
     app.on('ready', () => {
-        win = mainWindow.create();
-        win.webContents.openDevTools();
+        if (win === null) {
+            console.log("Dev Server Starting");
+            win = mainWindow.create();
+        }
+        // win.webContents.openDevTools();
         // require('electron-react-devtools').install();
     });
 
@@ -35,9 +38,10 @@ try {
     app.on('window-all-closed', () => {
         // On OS X it is common for applications and their menu bar
         // to stay active until the user quits explicitly with Cmd + Q
-        if (process.platform !== 'darwin') {
-            app.quit();
-        }
+        // if (process.platform !== 'darwin') {
+        //     app.quit();
+        // }
+        app.quit();
     });
 
     app.on('activate', () => {

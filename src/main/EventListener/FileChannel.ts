@@ -22,7 +22,7 @@ export class FileChannel {
     @channel<IOpenFile, Observable<string>>('load')
     public readFile({title,filter,encode}: IOpenFile) {
         console.log('receive', title, filter, encode);
-        return new FileDialog().setFilters(filter).openFile(title || '打开', encode)
+        return new FileDialog().setFilters(filter).readFile(title || '打开', encode)
     }
 
     // @channel<IResponse, string>('go')

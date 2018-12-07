@@ -1,4 +1,4 @@
-import { Dialog, FileFilter, OpenDialogOptions} from 'electron';
+import { Dialog, FileFilter, OpenDialogOptions, Shell } from 'electron';
 import * as Rx from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { FileUtil } from './file-util';
@@ -6,10 +6,19 @@ import { FileUtil } from './file-util';
 
 declare const window: any;
 export type DialogProperties = 'openFile' | 'openDirectory' | 'multiSelections' | 'showHiddenFiles' | 'createDirectory' | 'promptToCreate' | 'noResolveAliases' | 'treatPackageAsDirectory';
+
+/**
+ * 
+ */
 export class FileDialog {
     private dialog: Dialog;
     private filters: FileFilter[];
     private properties: Set<DialogProperties> = new Set<DialogProperties>([]);
+
+    /**
+     * 
+     * @param isRemote 
+     */
     constructor(isRemote?: boolean) {
         if(isRemote){
             const remote = window.require('electron').remote;
@@ -20,6 +29,11 @@ export class FileDialog {
             this.dialog = dialog;
         }
     } 
+
+    /**
+     * 
+     * @param title 
+     */
     public getOptions(title: string): OpenDialogOptions {
         return {
             title,
@@ -28,6 +42,11 @@ export class FileDialog {
             properties: Array.from(this.properties)
         }
     }
+
+    /**
+     * 
+     * @param filter 
+     */
     public setFilters(filter?: FileFilter[] | FileFilter): FileDialog {
         if (filter instanceof Array) {
             this.filters = filter;
@@ -44,21 +63,48 @@ export class FileDialog {
      * @param title 窗口标题
      * @param encoding 编码
      */
-    public openFile(title?: string, encoding?: string): Rx.Observable<string> {
+    public readFile(title?: string, encoding?: string): Rx.Observable<string> {
         return this.getPaths(title || '打开').pipe(
             mergeMap((path: string) => {
-                return this.openFileByPath(path, encoding)
+                return this.readFileByPath(path, encoding)
             })
         );
     }
+
     /**
-     * 通过路径打开文件
+     * 通过路径读取文件
      * @param path 
      * @param encoding 
      * @return Observable();
      */
-    public openFileByPath(path: string, encoding?: string): Rx.Observable<string> {
+    public readFileByPath(path: string, encoding?: string): Rx.Observable<string> {
         return new FileUtil(path).readFiles(encoding);
+    }
+
+    /**
+     * 
+     * @param title 
+     */
+    public openFile(title?: string){
+        return this.getPaths(title || '打开').pipe(
+            mergeMap((path: string) => {
+                return this.openFileByPath(path)
+            })
+        );
+    }
+    
+    /**
+     * 
+     * @param path 
+     */
+    public openFileByPath(path: string){
+        const shell: Shell = window.require("electron").shell;
+        try{
+            shell.openItem(path);
+        } catch(e) {
+            shell.beep();
+        }
+        return Rx.of(true);
     }
 
     /**
@@ -78,6 +124,11 @@ export class FileDialog {
             });
         });
     }
+
+    /**
+     * 
+     * @param title 
+     */
     public getPathsSync(title: string): string[] {
         return this.dialog.showOpenDialog(this.getOptions(title));
     }

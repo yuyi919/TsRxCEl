@@ -15,7 +15,7 @@
     "electron:tsc": "tsc -target es5 -lib dom,DOM.Iterable,es2015 -moduleResolution node -outDir build -rootDir src -baseUrl . -sourceMap -allowJs -emitDecoratorMetadata true -experimentalDecorators true -allowUnreachableCode src/main.ts",
     "start": "node scripts/start.js",
     "dev": "npm run electron:tsc && npm run hot-server",
-    "build": "npm run electron:tsc && node scripts/build.js",
+    "build": "node scripts/build.js && npm run electron:tsc",
     "electron:linux": "npm run electron:tsc && npx electron-builder build --linux",
     "electron:windows": "npm run electron:tsc && npx electron-builder build --windows --x64",
     "electron:mac": "npm run electron:tsc && npx electron-builder build --mac",

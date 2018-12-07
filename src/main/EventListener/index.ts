@@ -110,7 +110,7 @@ export function IpcListener<T extends object>(target: IEventListenClass<T>): IEv
                     }
                 }
             });
-            console.log(listenerMap);
+            // console.log(listenerMap);
             return instance;
         }
     }) as IEventListenClass<T>;

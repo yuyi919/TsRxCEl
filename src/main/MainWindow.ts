@@ -1,8 +1,9 @@
-import { BrowserWindow, Menu, screen, Size } from 'electron';
+import { BrowserWindow, screen, Size } from 'electron';
+// import { Menu } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import { WindowChannel } from './EventListener/WindowChannel';
-import { main as mainMenu } from './menu';
+// import { main as mainMenu } from './menu';
 
 const getCenterWindow = (screensize: Size, windowSize: Size) => {
     return {
@@ -10,7 +11,10 @@ const getCenterWindow = (screensize: Size, windowSize: Size) => {
         y: (screensize.height - windowSize.height) / 2,
         width: windowSize.width,
         height: windowSize.height,
-        frame: false
+        frame: false,
+        useContentSize: true,
+        resizable: false,
+        show: false
     }
 }
 export class MainWindow {
@@ -22,7 +26,7 @@ export class MainWindow {
         this.development = development;
     }
     public create(): BrowserWindow {
-        console.log('************************', this.development);
+        console.log('********** is development? **************', this.development);
         const electronScreen = screen;
         const screenSize = electronScreen.getPrimaryDisplay().workAreaSize;
         const windowSize: Size = {
@@ -39,6 +43,11 @@ export class MainWindow {
                 electron: require(path.join(__dirname, `../../node_modules/electron`))
             });
             this.win.loadURL('http://localhost:3000/');
+            // this.win.loadURL(url.format({
+            //     pathname: path.join(__dirname, '../../public/index.html'),
+            //     protocol: 'file:',
+            //     slashes: true
+            // }));
         } else {
             this.win.loadURL(url.format({
                 pathname: path.join(__dirname, '../../build/index.html'),
@@ -47,9 +56,15 @@ export class MainWindow {
             }));
         }
     
-        
-        const menu = Menu.buildFromTemplate(mainMenu);
-        Menu.setApplicationMenu(menu)
+        this.win.webContents.on("dom-ready",e=>{
+            if(this.win!=null){
+                console.log("Completed")
+                this.win.show();
+            }
+        });
+        // const menu = Menu.buildFromTemplate(mainMenu);
+        // Menu.setApplicationMenu(menu)
+
         // Emitted when the window is closed.
         this.win.on('closed', () => {
             // Dereference the window object, usually you would store window
