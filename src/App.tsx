@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as Rx from 'rxjs';
+import { interval } from 'rxjs';
 import './App.css';
 import logo from './logo.svg';
 
@@ -9,7 +9,7 @@ class App extends React.Component {
     num: 0
   }
   public componentDidMount() {
-    Rx.interval(1000).subscribe((num: number)=>{
+    interval(1000).subscribe((num: number)=>{
       this.setState({num});
     })
   }

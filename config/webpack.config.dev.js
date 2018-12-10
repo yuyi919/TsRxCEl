@@ -15,7 +15,7 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
-const publicPath = '/';
+const publicPath = 'http://localhost:3000/';
 // `publicUrl` is just like `publicPath`, but we will provide it to our app
 // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
 // Omit trailing slash as %PUBLIC_PATH%/xyz looks better than %PUBLIC_PATH%xyz.
@@ -36,6 +36,7 @@ module.exports = {
   entry: [
     // We ship a few polyfills by default:
     require.resolve('./polyfills'),
+    require.resolve('react-hot-loader/patch'),
     // Include an alternative client for WebpackDevServer. A client's job is to
     // connect to WebpackDevServer by a socket and get notified about changes.
     // When you save a file, the client will either apply hot updates (in case
@@ -117,7 +118,6 @@ module.exports = {
       // TODO: Disable require.ensure as it's not a standard language feature.
       // We are waiting for https://github.com/facebookincubator/create-react-app/issues/2176.
       // { parser: { requireEnsure: false } },
-
       {
         test: /\.(js|jsx|mjs)$/,
         loader: require.resolve('source-map-loader'),

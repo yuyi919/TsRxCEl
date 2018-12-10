@@ -9,20 +9,20 @@ export class WindowManager {
     private win: BrowserWindow | null | undefined = null;
     private serve: boolean;
     private channels: FileChannel;
-    // private win: BrowserWindow;
+
     constructor(serve: boolean){
         this.serve = serve;
         this.windowCreate();
         this.channels = new FileChannel();
-        console.log(this.channels);
     }
     
     @channel<boolean, boolean>('windowReCreate')
     public windowCreate(): boolean {
         this.mainWindow = new MainWindow(this.serve);
         if(this.win != null){
-            this.win.close();
+            const last = this.win;
             this.win = this.mainWindow.create();
+            last.close();
         }
         return true;
     }
@@ -60,6 +60,7 @@ export class WindowManager {
     }
 
     public onDestroy(): void {
+        this.channels.onDestroy();
         console.log('disposed');
     }
 }

@@ -82,17 +82,18 @@ choosePort(HOST, DEFAULT_PORT)
       proxyConfig,
       urls.lanUrlForConfig
     );
-    const app = express();
-    const wdm = webpackDevMiddleware(compiler, serverConfig);
-    app.use(wdm);
-    app.use(webpackHotMiddleware(compiler, serverConfig));
-    // Launch WebpackDevServer.
-    const server = app.listen(port, HOST, err => {
+    const devServer = new WebpackDevServer(compiler, serverConfig);
+    // const app = express();
+    // const wdm = webpackDevMiddleware(compiler, serverConfig);
+    // app.use(wdm);
+    // app.use(webpackHotMiddleware(compiler, serverConfig));
+    // // Launch WebpackDevServer.
+    devServer.listen(port, HOST, err => {
       if (err) {
         return console.log(err);
       }
       if (isInteractive) {
-        //clearConsole();
+        clearConsole();
       }
       console.log(`Listening at http://${HOST}:${port}`);
       spawn('npm', ['run', 'start-hot'], { shell: true, env: process.env, stdio: 'inherit' })
@@ -102,12 +103,19 @@ choosePort(HOST, DEFAULT_PORT)
 
     ['SIGINT', 'SIGTERM'].forEach(function(sig) {
       process.on(sig, function() {
-        wdm.close();
-        server.close(() => {
-          process.exit();
-        });
+        devServer.close();
+        process.exit();
       });
     });
+    // ['SIGINT', 'SIGTERM'].forEach(function(sig) {
+    //   process.on(sig, function() {
+    //     console.log("*********close")
+    //     wdm.close();
+    //     server.close(() => {
+    //       process.exit();
+    //     });
+    //   });
+    // });
   })
   .catch(err => {
     if (err && err.message) {

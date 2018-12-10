@@ -1,6 +1,6 @@
 import { ipcMain, IpcMessageEvent } from 'electron';
 import 'reflect-metadata';
-import * as Rx from 'rxjs';
+import { Observable, Observer, Subscription } from 'rxjs';
 import { share } from 'rxjs/operators';
 import '../../global';
 
@@ -13,9 +13,9 @@ export type IpcMessageFunc<T> = (event: IpcMessageResponse<T>) => T;
  * 监听 electron主线程 频道的观察者对象
  * 
  */
-export class IpcEventListener<T = any, S = any> extends Rx.Observable<IpcMessageResponse<T>> {
+export class IpcEventListener<T = any, S = any> extends Observable<IpcMessageResponse<T>> {
     private channelName: string;
-    private listeners: Map<IpcMessageFunc<T>, Rx.Subscription> = new Map<IpcMessageFunc<T>, Rx.Subscription>();
+    private listeners: Map<IpcMessageFunc<T>,Subscription> = new Map<IpcMessageFunc<T>, Subscription>();
     /**
      * 创建频道监听
      * @param channelName  频道名
@@ -23,7 +23,7 @@ export class IpcEventListener<T = any, S = any> extends Rx.Observable<IpcMessage
     constructor(channelName: string) {
         super();
         this.channelName = channelName;
-        this.source = new Rx.Observable((observer: Rx.Observer<IpcMessageResponse<T>>) => {
+        this.source = new Observable((observer: Observer<IpcMessageResponse<T>>) => {
             ipcMain.on(channelName, (event: IpcMessageEvent, response: T) => {
                 // 转换为IpcMessageResponse格式
                 observer.next({ event, response })
@@ -53,7 +53,7 @@ export class IpcEventListener<T = any, S = any> extends Rx.Observable<IpcMessage
      * @param listener 回调方法
      */
     public remove(listener: IpcMessageFunc<T>) {
-        const sub: Rx.Subscription | undefined = this.listeners.get(listener);
+        const sub: Subscription | undefined = this.listeners.get(listener);
         if (sub) {
             sub.unsubscribe();
             this.listeners.delete(listener);
@@ -89,7 +89,7 @@ export function IpcListener<T extends object>(target: IEventListenClass<T>): IEv
                     listener.listen((e: IpcMessageResponse<any>) => {
                         console.log(e);
                         const response = Reflect.apply(method, instance, [e.response, e.event])
-                        if (response instanceof Rx.Observable){
+                        if (response instanceof Observable){
                             response.subscribe(asyncResponse=>{
                                 listener.return(e.event, asyncResponse);
                             })

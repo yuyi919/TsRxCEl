@@ -1,6 +1,8 @@
 import { IpcMessageEvent, IpcRenderer } from 'electron';
-import * as Rx from 'rxjs';
+import { Observable, Observer } from 'rxjs';
 import { share } from 'rxjs/operators';
+
+// const share = require('rxjs/operators');
 
 let ipcRenderer: IpcRenderer | any;
 try{
@@ -19,14 +21,14 @@ export interface IClientResponse {
  * @type A 标准入参类型
  * @type R Observable返回值类型
  */
-export class ClientEventEmitter<A, R> extends Rx.Observable<R> {
-    public observer: Rx.Observer<R>;
+export class ClientEventEmitter<A, R> extends Observable<R> {
+    public observer: Observer<R>;
     private channelName: string;
     // 频道名称
     constructor(channelName: string) {
         super();
         this.channelName = "$$$IPCL_"+channelName;
-        this.source = new Rx.Observable((observer: Rx.Observer<R>) => {
+        this.source = new Observable((observer: Observer<R>) => {
             this.observer = observer;
             console.log(this);
         }).pipe(

@@ -23,7 +23,7 @@ export const TopBar: React.SFC<ITopBarProps> = ({ position = 'static', color = '
         <AppBar color={color} position={position} style={styles.grow} {...other}>
             <Toolbar>
                 {icon && <IconButton color="inherit" style={styles.menuButton}>{icon}</IconButton>}
-                <Typography variant='title' style={styles.grow}>{title}</Typography>
+                <Typography variant='h6' style={styles.grow}>{title}</Typography>
                 {children}
             </Toolbar>
         </AppBar>

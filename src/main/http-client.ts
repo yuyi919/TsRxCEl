@@ -1,5 +1,5 @@
 import { Promise } from 'es6-promise';
-import { ClientRequest, ClientResponse, get as httpGet, OutgoingHttpHeaders, request as httpRequest, RequestOptions } from 'http';
+import { ClientRequest, get as httpGet, IncomingMessage as ClientResponse, OutgoingHttpHeaders, request as httpRequest, RequestOptions } from 'http';
 import * as querystring from 'querystring';
 
 

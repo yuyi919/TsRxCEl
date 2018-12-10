@@ -7,7 +7,10 @@ import registerServiceWorker from './registerServiceWorker';
 import Root from './RootRoutes';
 
 ReactDOM.render(
-  <><CssBaseline /><AppContainer><Root /></AppContainer></>,
+  <AppContainer><><CssBaseline /><Root /></></AppContainer>,
   document.getElementById('root') as HTMLElement
 );
+if ((module as any).hot) {
+  (module as any).hot.accept();
+}
 registerServiceWorker();

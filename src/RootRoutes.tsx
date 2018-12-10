@@ -15,6 +15,9 @@ import { RootStore } from "./shared";
 const stores = new RootStore();
 
 const theme: Theme = createMuiTheme({
+    typography: {
+        useNextVariants: true,
+    },
     palette: {
         primary: Colors.lightBlue,
         secondary: Colors.blueGrey,

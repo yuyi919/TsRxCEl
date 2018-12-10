@@ -1,6 +1,6 @@
 
 import { IpcMessageEvent, IpcRenderer } from 'electron';
-import * as Rx from 'rxjs';
+import { from, Observable, Observer } from 'rxjs';
 import { map, mergeMap, switchMap } from 'rxjs/operators';
 import * as XmlDom from 'xmldom';
 declare const window: any;
@@ -10,7 +10,7 @@ const ipcRenderer: IpcRenderer = electron.ipcRenderer;
 
 export default class HttpService {
     public static get(url: string, params: any, ...other: any[]){
-        return new Rx.Observable((observer: Rx.Observer<any>)=>{
+        return new Observable((observer: Observer<any>)=>{
             ipcRenderer.once('http-get',(event: IpcMessageEvent, response: object | string)=>{
                 observer.next(response);
                 observer.complete();
@@ -32,7 +32,7 @@ export default class HttpService {
                     linkArray.push(link[0].getAttribute('href'));
                     link = dom.getElementById(++i +'');
                 }
-                return Rx.from(linkArray);
+                return from(linkArray);
             }),
             mergeMap((linkUrl)=>{
                 return this.get(linkUrl,{});

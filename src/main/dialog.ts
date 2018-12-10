@@ -1,5 +1,5 @@
 import { Dialog, FileFilter, OpenDialogOptions, Shell } from 'electron';
-import * as Rx from 'rxjs';
+import { Observable, Observer, of } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { FileUtil } from './file-util';
 
@@ -32,7 +32,7 @@ export class FileDialog {
 
     /**
      * 
-     * @param title 
+     * @param title  
      */
     public getOptions(title: string): OpenDialogOptions {
         return {
@@ -63,7 +63,7 @@ export class FileDialog {
      * @param title 窗口标题
      * @param encoding 编码
      */
-    public readFile(title?: string, encoding?: string): Rx.Observable<string> {
+    public readFile(title?: string, encoding?: string): Observable<string> {
         return this.getPaths(title || '打开').pipe(
             mergeMap((path: string) => {
                 return this.readFileByPath(path, encoding)
@@ -77,7 +77,7 @@ export class FileDialog {
      * @param encoding 
      * @return Observable();
      */
-    public readFileByPath(path: string, encoding?: string): Rx.Observable<string> {
+    public readFileByPath(path: string, encoding?: string): Observable<string> {
         return new FileUtil(path).readFiles(encoding);
     }
 
@@ -104,15 +104,15 @@ export class FileDialog {
         } catch(e) {
             shell.beep();
         }
-        return Rx.of(true);
+        return of(true);
     }
 
     /**
      * 打开文件窗口，获取一个文件路径
      * @param title 窗口标题
      */
-    public getPaths(title: string): Rx.Observable<string> {
-        return new Rx.Observable<any>((obser: Rx.Observer<string>) => {
+    public getPaths(title: string): Observable<string> {
+        return new Observable<any>((obser: Observer<string>) => {
             this.dialog.showOpenDialog(this.getOptions(title), (filePath: string[]) => {
                 if(filePath && filePath.length > 0){
                     for(const path of filePath){

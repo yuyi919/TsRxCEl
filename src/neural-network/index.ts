@@ -1,9 +1,8 @@
-import * as tf from '@tensorflow/tfjs';
+// import {sequential} from '@tensorflow/tfjs';
 
 export class Index {
     constructor() {
-      
-        tf.sequential();
-        
+        console.log('index');
+        // sequential();
     }
 }

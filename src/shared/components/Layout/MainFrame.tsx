@@ -10,7 +10,7 @@ import { openAulFile, windowReCreate, windowReload } from 'src/shared/clientApi'
 import * as Lite from 'src/shared/components/Lite';
 import { MainFrameStore } from './index';
 
-
+ 
 export interface IMainFrameProps extends StyledComponentProps {
     children?: React.ReactNode | React.ReactNodeArray;
     store?: MainFrameStore | any;
@@ -23,7 +23,7 @@ const styles: StyleRulesCallback<"drawerPaper" | "drawerPaperClose"> = (theme: T
         overflow: 'hidden',
         position: 'fixed',
         display: 'flex',
-        bottom: 0, top: 0, left: 0, right: 0
+        bottom: 0, top: 0, left: 0, right: 0 
     },
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
