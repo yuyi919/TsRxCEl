@@ -1,7 +1,7 @@
 import { action, observable } from 'mobx';
 // import { toJS } from 'mobx';
 import { openTxtFile } from 'src/shared/clientApi';
-import * as Lite from 'src/shared/components/Lite';
+import * as Compose from 'src/shared/components/Compose';
 
 export interface ISearchList<T> {
     title: string | null;
@@ -18,10 +18,10 @@ export class MainFrameStore {
     @observable public title: string = "";
     @observable public selectedTree: Array<number> = [];
     public listTag: Array<string> = ['h1', 'h2', 'h3', 'h4', 'h5'];
-    @observable public menuList: Lite.DataListStore<Lite.IMenuItemConfig>;
+    @observable public menuList: Compose.DataListStore<Compose.IMenuItemConfig>;
 
     constructor() {
-        this.menuList = new Lite.DataListStore([
+        this.menuList = new Compose.DataListStore([
             {
                 title: "menu1", children: [
                     { title: "menu1-1" },
@@ -49,7 +49,7 @@ export class MainFrameStore {
     @action public toggle = () => {
         this.open = !this.open;
     }
-    @action public onItemClick = (index: number, e: Lite.DataListStore<Lite.IMenuItemConfig>, parentIndexList: Array<number>) => {
+    @action public onItemClick = (index: number, e: Compose.DataListStore<Compose.IMenuItemConfig>, parentIndexList: Array<number>) => {
         const currentItem = e.getItem(index)
         if(currentItem){
             if(currentItem.children){
@@ -60,8 +60,8 @@ export class MainFrameStore {
             this.title = currentItem.title;
         }
        // console.log(toJS(e),parentIndexList)
-        // let current: Lite.IMenuItemConfig[] = this.menuList.data;
-        // let currentItem: Lite.IMenuItemConfig | null = null;
+        // let current: Compose.IMenuItemConfig[] = this.menuList.data;
+        // let currentItem: Compose.IMenuItemConfig | null = null;
         // // console.log("start", toJS(current))
         // for (const i of parentIndexList) {
         //     currentItem = current[i]
@@ -102,7 +102,7 @@ export class MainFrameStore {
                 rootTitle.forEach((i: Element, index: number) => {
                     menu.push(this.searchTag(i, 0))
                 })
-                this.menuList = new Lite.DataListStore(menu as any, {onItemClick: this.onItemClick});
+                this.menuList = new Compose.DataListStore(menu as any, {onItemClick: this.onItemClick});
             }
         })
         // HttpService.getXml('www.baidu.com/s?word=node爬虫',{}).subscribe(response=>{

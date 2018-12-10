@@ -3,11 +3,10 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import { Theme, withStyles } from '@material-ui/core/styles';
 import { observer } from 'mobx-react';
 import * as React from 'react';
+import { ICON } from '../../Lite';
 import { IAutoListProps, OAutoList } from '../AutoList';
-import { Icon, TreeMenuStore } from '../index';
-import { IMenuItemConfig, ITreeMenuConfig } from './interface';
+import { IMenuItemConfig, TreeMenuStore } from './interface';
 import { OTreeMenuItem } from './Item';
-import { DataListStore } from './store';
 
 export interface ITreeMenuProps extends ListProps {
     sheader?: string;
@@ -45,7 +44,7 @@ const styles = (theme: Theme) => {
 
 export const TreeMenuItemCollapseIcon = observer(({ store, index }: { store: TreeMenuStore, index: number }) => {
     if (store.hasChildren(index, (config: IMenuItemConfig) => config.children != null)) {
-        return store.isCollapse(index) ? <Icon.ExpandLess /> : <Icon.ExpandMore />
+        return store.isCollapse(index) ? <ICON.ExpandLess /> : <ICON.ExpandMore />
     }
     return null;
 })
@@ -82,7 +81,7 @@ export const TreeMenuFactory = (container: any) => {
                         level: level + 1,
                         parentIndexList: [...parentIndexList, index]
                     }
-                    store.childrenStore[index] = new DataListStore<IMenuItemConfig, ITreeMenuConfig>(store.getItem(index).children, nextConfig);
+                    store.childrenStore[index] = new TreeMenuStore(store.getItem(index).children, nextConfig);
                 }
             }
             return store.childrenStore[index];

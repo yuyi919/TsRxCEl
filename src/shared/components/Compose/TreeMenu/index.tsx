@@ -23,4 +23,3 @@ export class CollapseMenu extends React.Component<{ index: number; store: TreeMe
 export * from './Factory';
 export * from './interface';
 export * from './Item';
-export * from './store';

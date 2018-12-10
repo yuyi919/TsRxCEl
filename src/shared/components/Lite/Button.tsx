@@ -1,10 +1,8 @@
 import { withTheme } from '@material-ui/core';
 import Button, { ButtonProps } from "@material-ui/core/Button";
 import * as Svg from '@material-ui/core/SvgIcon';
-import * as Icon from '@material-ui/icons';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-export { Icon };
 
 export interface ILiteButtonProps extends ButtonProps {
     type: 'text' | 'flat' | 'outlined' | 'contained' | 'raised' | 'fab' | 'extendedFab';

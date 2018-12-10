@@ -3,9 +3,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText, { ListItemTextProps } from '@material-ui/core/ListItemText';
 import { observer } from 'mobx-react';
 import * as React from 'react';
-import { Icon } from '../index';
-import { IMenuItemConfig, ITreeMenuConfig } from './interface';
-import { DataListStore } from './store';
+import { ICON } from '../../Lite';
+import { IMenuItemConfig, ITreeMenuConfig, TreeMenuStore } from './interface';
 
 
 
@@ -20,8 +19,8 @@ export interface IOItemIconProps {
 }
 export const OItemIcon = observer(({ icon, ...other }: IOItemIconProps) => {
     // console.log("icon update")
-    if (icon && Icon[icon]) {
-        const ItemIcon = Icon[icon]
+    if (icon && ICON[icon]) {
+        const ItemIcon = ICON[icon]
         return <ListItemIcon {...other}><ItemIcon /></ListItemIcon>;
     } else {
         return null;
@@ -54,7 +53,7 @@ export const OListItem = observer(({ children, ...other }: ITreeMenuItemProps) =
 // }
 
 
-export const transformFunc = (index: number, config: IMenuItemConfig, store: DataListStore<IMenuItemConfig, ITreeMenuConfig>) => {
+export const transformFunc = (index: number, config: IMenuItemConfig, store: TreeMenuStore) => {
     const { icon, children, ...other } = config;
     return {
         ...other,
@@ -63,7 +62,7 @@ export const transformFunc = (index: number, config: IMenuItemConfig, store: Dat
 }
 export interface IOTreeMenuItemProps extends ListItemProps {
     index: number;
-    store: DataListStore<IMenuItemConfig, ITreeMenuConfig>;
+    store: TreeMenuStore;
 }
 // export const OTreeMenuItem = observer(({ index, store, children, ...other }: IOTreeMenuItemProps) => {
 //     const item = store.getItem(index, transformFunc)

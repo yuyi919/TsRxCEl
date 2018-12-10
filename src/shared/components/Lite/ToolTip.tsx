@@ -1,4 +1,5 @@
 import { Tooltip as ToolTopContainer } from '@material-ui/core';
+import Tooltip, { TooltipProps } from '@material-ui/core/Tooltip'
 import * as React from 'react';
 
 export type Placement = 
@@ -15,7 +16,7 @@ export type Placement =
 | 'top-start'
 | 'top';
 
-export function Tooltip<P = any>(config: {
+export function TooltipFactory<P = any>(config: {
      title: string;
      placement?: Placement;
 }) {
@@ -29,4 +30,8 @@ export function Tooltip<P = any>(config: {
             );
         }) as any;
     }
+}
+
+export function LiteTooltip(props: TooltipProps) {
+    return <Tooltip {...props}/>
 }

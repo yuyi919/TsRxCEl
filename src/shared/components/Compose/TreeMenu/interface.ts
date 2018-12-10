@@ -1,4 +1,4 @@
-import { DataListStore } from './store';
+import { DataListStore } from 'src/shared/logic/DataList';
 export interface ITreeMenuConfig {
     onItemClick: (index: number, e: TreeMenuStore, parentIndexList: Array<number>, nativeEvent: React.MouseEvent) => void;
     level?: number;
@@ -15,4 +15,8 @@ export interface IMenuItemConfig {
     collapse?: boolean;
 }
 
-export type TreeMenuStore = DataListStore<IMenuItemConfig, ITreeMenuConfig>
+export class TreeMenuStore extends DataListStore<IMenuItemConfig, ITreeMenuConfig>{
+    constructor(defaultData?: Array<IMenuItemConfig>, config?: ITreeMenuConfig) {
+      super(defaultData, config);
+    }
+}

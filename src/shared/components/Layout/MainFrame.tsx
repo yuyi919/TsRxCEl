@@ -7,6 +7,7 @@ import { inject, observer } from 'mobx-react';
 import * as React from 'react';
 import { FileDialog } from 'src/main/dialog';
 import { openAulFile, windowReCreate, windowReload } from 'src/shared/clientApi';
+import * as Compose from 'src/shared/components/Compose';
 import * as Lite from 'src/shared/components/Lite';
 import { MainFrameStore } from './index';
 
@@ -116,7 +117,7 @@ export const MainFrame = withStyles(styles)(inject("store")(observer((props: IMa
                 anchor="left"
             >
                 <div className={classes.toolbar} />
-                <Lite.CollapseMenu index={0} store={store.menuList} />
+                <Compose.CollapseMenu index={0} store={store.menuList} />
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.toolbar} />
