@@ -117,7 +117,7 @@ export const MainFrame = withStyles(styles)(inject("store")(observer((props: IMa
                 anchor="left"
             >
                 <div className={classes.toolbar} />
-                <Compose.CollapseMenu index={0} store={store.menuList} />
+                <Compose.CollapseMenu store={store.menuList} />
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.toolbar} />

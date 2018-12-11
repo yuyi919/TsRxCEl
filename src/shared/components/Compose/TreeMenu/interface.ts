@@ -1,22 +1,39 @@
-import { DataListStore } from 'src/shared/logic/DataList';
-export interface ITreeMenuConfig {
-    onItemClick: (index: number, e: TreeMenuStore, parentIndexList: Array<number>, nativeEvent: React.MouseEvent) => void;
-    level?: number;
+import { IDataListConfig } from 'src/shared/logic';
+import { IMenuItemConfig, TreeMenuStore } from '.';
+
+export interface ITreeMenuConfig<T = IMenuItemConfig> extends IDataListConfig<IMenuItemConfig>{
+    /**
+     * @param index
+     * @param store
+     * @param currentIndexList 包含当前索引在内的完整索引
+     * @param nativeEvent
+     */
+    onItemClick: (item: T | null, index: number, store: TreeMenuStore) => void;
+    /**
+     * 
+     */
     parentIndexList?: Array<number>;
+    /**
+     * 
+     */
     selectedTreeList?: Array<number>;
+    /**
+     * 
+     */
     collapse?: boolean;
+
 }
 
-export interface IMenuItemConfig {
-    icon?: any;
-    title: string;
-    children?: Array<IMenuItemConfig>;
-    selected?: boolean;
-    collapse?: boolean;
-}
-
-export class TreeMenuStore extends DataListStore<IMenuItemConfig, ITreeMenuConfig>{
-    constructor(defaultData?: Array<IMenuItemConfig>, config?: ITreeMenuConfig) {
-      super(defaultData, config);
-    }
-}
+/**
+ * 
+ */
+export interface ITreeMenuContainerProps { 
+    /**
+     * 父级列表中的索引
+     */
+    index?: number; 
+    /**
+     * 父级列表Store
+     */
+    store: TreeMenuStore;
+};

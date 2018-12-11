@@ -1,13 +1,13 @@
 import Collapse, { CollapseProps } from '@material-ui/core/Collapse';
 import * as React from 'react';
-import { TreeMenuStore } from '../index';
 import { TreeMenuFactory } from './Factory';
+import { ITreeMenuContainerProps } from './interface';
 
 @TreeMenuFactory
-export class CollapseMenu extends React.Component<{ index: number; store: TreeMenuStore } & CollapseProps> {
+export class CollapseMenu extends React.Component<ITreeMenuContainerProps & CollapseProps> {
     public render() {
-        const { store, index, children, ...other } = this.props;
-        const item = store.getItem(index)
+        const { store, index = 0, children, ...other } = this.props;
+        const item = store.getDataItem(index)
         if (item && item.children != null) {
             // console.log(index, store, item)
             return (
@@ -23,3 +23,4 @@ export class CollapseMenu extends React.Component<{ index: number; store: TreeMe
 export * from './Factory';
 export * from './interface';
 export * from './Item';
+export * from './TreeMenuStore';

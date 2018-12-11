@@ -4,6 +4,9 @@ import * as Svg from '@material-ui/core/SvgIcon';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
+/**
+ * 
+ */
 export interface ILiteButtonProps extends ButtonProps {
     type: 'text' | 'flat' | 'outlined' | 'contained' | 'raised' | 'fab' | 'extendedFab';
     routerLink?: string;
@@ -13,6 +16,10 @@ export interface ILiteButtonProps extends ButtonProps {
     rightIcon?: React.ComponentType<Svg.SvgIconProps>;
 }
 
+/**
+ * 
+ * @param props: ILiteButtonProps
+ */
 const Lite = ({
     icon, leftIcon, rightIcon, text,
     type = 'contained', color = 'default',

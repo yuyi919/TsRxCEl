@@ -1,7 +1,7 @@
 import { action, observable } from 'mobx';
-// import { toJS } from 'mobx';
 import { openTxtFile } from 'src/shared/clientApi';
 import * as Compose from 'src/shared/components/Compose';
+import { IMenuItemConfig } from 'src/shared/components/Compose';
 
 export interface ISearchList<T> {
     title: string | null;
@@ -18,46 +18,44 @@ export class MainFrameStore {
     @observable public title: string = "";
     @observable public selectedTree: Array<number> = [];
     public listTag: Array<string> = ['h1', 'h2', 'h3', 'h4', 'h5'];
-    @observable public menuList: Compose.DataListStore<Compose.IMenuItemConfig>;
+    @observable public menuList: Compose.TreeMenuStore;
 
     constructor() {
-        this.menuList = new Compose.DataListStore([
+        this.menuList = new Compose.TreeMenuStore([
             {
-                title: "menu1", children: [
-                    { title: "menu1-1" },
+                index: 0, title: "menu1", children: [
+                    { index: 0, title: "menu1-1" },
                     {
-                        title: "menu1-2", children: [
-                            { title: "menu1-2-1" },
-                            { title: "menu1-2-2" }
+                        index: 1, title: "menu1-2", children: [
+                            { index: 0, title: "menu1-2-1" },
+                            { index: 1, title: "menu1-2-2" }
                         ]
                     }
                 ]
             },
-            { title: "menu2",children: [
-                { title: "menu2-1" },
+            { index: 1, title: "menu2", children: [
+                { index: 0, title: "menu2-1" },
                 {
-                    title: "menu2-2", children: [
-                        { title: "menu2-2-1" },
-                        { title: "menu2-2-2" }
+                    index: 1, title: "menu2-2", children: [
+                        { index: 0, title: "menu2-2-1" },
+                        { index: 1, title: "menu2-2-2" },
+                        { index: 2, title: "menu2-2-3" },
+                        { index: 3, title: "menu2-2-4" }
                     ]
                 }
             ]},
-            { title: "menu3" }
+            { index: 2, title: "menu3" }
         ], {onItemClick: this.onItemClick});
     }
 
     @action public toggle = () => {
         this.open = !this.open;
     }
-    @action public onItemClick = (index: number, e: Compose.DataListStore<Compose.IMenuItemConfig>, parentIndexList: Array<number>) => {
-        const currentItem = e.getItem(index)
-        if(currentItem){
-            if(currentItem.children){
-                e.collapse(index)
-            }
-            e.select(index)
-            this.content = (currentItem as any).content || [];
-            this.title = currentItem.title;
+    @action public onItemClick = (item: IMenuItemConfig, index: number, store: Compose.TreeMenuStore) => {
+        if(item){
+            console.log(item.title)
+            // this.content = (item as any).content || [];
+            // this.title = item.title;
         }
        // console.log(toJS(e),parentIndexList)
         // let current: Compose.IMenuItemConfig[] = this.menuList.data;
@@ -102,7 +100,7 @@ export class MainFrameStore {
                 rootTitle.forEach((i: Element, index: number) => {
                     menu.push(this.searchTag(i, 0))
                 })
-                this.menuList = new Compose.DataListStore(menu as any, {onItemClick: this.onItemClick});
+                this.menuList = new Compose.TreeMenuStore(menu as any, {onItemClick: this.onItemClick});
             }
         })
         // HttpService.getXml('www.baidu.com/s?word=node爬虫',{}).subscribe(response=>{
