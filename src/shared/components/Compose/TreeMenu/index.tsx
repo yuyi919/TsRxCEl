@@ -11,7 +11,7 @@ export class CollapseMenu extends React.Component<ITreeMenuContainerProps & Coll
         if (item && item.children != null) {
             // console.log(index, store, item)
             return (
-                <Collapse in={store.collapseIndex == index} timeout="auto" unmountOnExit={item.children.length < 20} {...other}>
+                <Collapse in={store.isCollapse(index)} timeout="auto" unmountOnExit={item.children.length < 20} {...other}>
                     {children}
                 </Collapse>
             );

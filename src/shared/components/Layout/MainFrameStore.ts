@@ -18,7 +18,7 @@ export class MainFrameStore {
     @observable public title: string = "";
     @observable public selectedTree: Array<number> = [];
     public listTag: Array<string> = ['h1', 'h2', 'h3', 'h4', 'h5'];
-    @observable public menuList: Compose.TreeMenuStore;
+    @observable public menuList: Compose.ITreeMenuStore;
 
     constructor() {
         this.menuList = new Compose.TreeMenuStore([
@@ -51,7 +51,7 @@ export class MainFrameStore {
     @action public toggle = () => {
         this.open = !this.open;
     }
-    @action public onItemClick = (item: IMenuItemConfig, index: number, store: Compose.TreeMenuStore) => {
+    @action public onItemClick = (item: IMenuItemConfig, index: number, store: Compose.ITreeMenuStore) => {
         if(item){
             console.log(item.title)
             // this.content = (item as any).content || [];

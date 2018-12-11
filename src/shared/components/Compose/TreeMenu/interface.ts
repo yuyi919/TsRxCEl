@@ -1,5 +1,5 @@
 import { IDataListConfig } from 'src/shared/logic';
-import { IMenuItemConfig, TreeMenuStore } from '.';
+import { IMenuItemConfig, ITreeMenuStore } from '.';
 
 export interface ITreeMenuConfig<T = IMenuItemConfig> extends IDataListConfig<IMenuItemConfig>{
     /**
@@ -8,7 +8,7 @@ export interface ITreeMenuConfig<T = IMenuItemConfig> extends IDataListConfig<IM
      * @param currentIndexList 包含当前索引在内的完整索引
      * @param nativeEvent
      */
-    onItemClick: (item: T | null, index: number, store: TreeMenuStore) => void;
+    onItemClick: (item: T | null, index: number, store: ITreeMenuStore) => void;
     /**
      * 
      */
@@ -30,5 +30,5 @@ export interface ITreeMenuContainerProps {
     /**
      * 父级列表Store
      */
-    store: TreeMenuStore;
+    store: ITreeMenuStore;
 };

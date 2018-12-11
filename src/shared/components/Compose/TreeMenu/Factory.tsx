@@ -6,13 +6,13 @@ import { IMenuItemConfig, ITreeMenuContainerProps } from '.';
 import { OTreeMenuItem } from "./Item";
 import { OAutoMenuList, OList } from './List';
 import { styles } from './styles';
-import { TreeMenuStore } from "./TreeMenuStore";
+import { ITreeMenuStore } from "./TreeMenuStore";
 
 
 export interface IOTreeListProps extends ListProps {
     sheader?: string;
     data?: Array<IMenuItemConfig>;
-    store: TreeMenuStore;
+    store: ITreeMenuStore;
 }
 
 /**

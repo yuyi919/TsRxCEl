@@ -2,29 +2,27 @@ import { action, computed, observable } from 'mobx';
 import { DataListStore, IDataListStore } from 'src/shared/logic/DataList';
 import { IMenuItemConfig, ITreeMenuConfig } from '.';
 
-export interface IItemClickEvent {
-    index: number;
-    nativeEvent: React.MouseEvent;
-}
 
 export class TreeMenuStore extends DataListStore<IMenuItemConfig, ITreeMenuConfig> implements ITreeMenuStore {
 
-    @observable
-    public collapseIndex: number | null;
-    public root: TreeMenuStore;
-    public level: number;
     public lastEvent: React.MouseEvent;
-    public childrenStore: Array<TreeMenuStore> = [];
+    public level: number;
+
+    @observable
+    private collapseIndex: number | null;
+    private root: ITreeMenuStore;
+    private childrenStore: Array<ITreeMenuStore> = [];
 
     @computed public get currentSelectedStore() {
         return this.getChildrenStore(this.selectedIndex);
     }
+
     @computed public get currentTreeIndex(): Array<number> {
         const { rootRouteList = [] } = this.config;
         return [...rootRouteList, this.selectedIndex];
     };
 
-    constructor(defaultData: Array<IMenuItemConfig>, config: ITreeMenuConfig, level: number = 0, root?: TreeMenuStore) {
+    constructor(defaultData: Array<IMenuItemConfig>, config: ITreeMenuConfig, level: number = 0, root?: ITreeMenuStore) {
         super(defaultData, config);
         this.level = level;
         this.root = root || this;
@@ -71,7 +69,7 @@ export class TreeMenuStore extends DataListStore<IMenuItemConfig, ITreeMenuConfi
         return this.collapseIndex == index;
     }
 
-    public getChildrenStore = (index: number): TreeMenuStore => {
+    public getChildrenStore = (index: number): ITreeMenuStore => {
         // 不存在则新建一个store
         if (!this.childrenStore[index]) {
             const { rootRouteList = [], ...other } = this.config;
@@ -90,11 +88,11 @@ export class TreeMenuStore extends DataListStore<IMenuItemConfig, ITreeMenuConfi
         return this.childrenStore[index];
     }
 
-    public clearAllSelected() {
+    public clearTreeSelected(): void {
         for (const store of this.childrenStore) {
             // 递归清理全部子store
             if (store) {
-                store.clearAllSelected();
+                store.clearTreeSelected();
             }
         }
         // 最后再清理自身
@@ -109,7 +107,7 @@ export class TreeMenuStore extends DataListStore<IMenuItemConfig, ITreeMenuConfi
             // 清理不同分支
             if (!this.isCurrentIndex(stepIndex) && this.currentSelectedStore != null) {
                 // console.log(`第${this.level}级, 清理 ${this.currentItem!.title} 已选中的子项`)
-                this.currentSelectedStore.clearAllSelected();
+                this.currentSelectedStore.clearTreeSelected();
             }
 
             this.select(stepIndex);
@@ -120,12 +118,22 @@ export class TreeMenuStore extends DataListStore<IMenuItemConfig, ITreeMenuConfi
         }
     }
 }
+
+export interface IItemClickEvent {
+    index: number;
+    nativeEvent: React.MouseEvent;
+}
+
 export interface ITreeMenuStore extends IDataListStore<IMenuItemConfig, ITreeMenuConfig> {
+    // level: number;
+    // root: ITreeMenuStore;
+    // childrenStore: ITreeMenuStore[];
     level: number;
-    root: ITreeMenuStore;
-    childrenStore: ITreeMenuStore[];
+    lastEvent: React.MouseEvent;
     collapse(index: number): this;
     isCollapse(index: number): boolean;
-    getChildrenStore(index: number): TreeMenuStore;
+    getChildrenStore(index: number): ITreeMenuStore;
     onItemClick({ index, nativeEvent }: IItemClickEvent): void;
+    clearTreeSelected(): void;
+    selectedByTree(currentTreeIndex: Array<number>): void;
 }

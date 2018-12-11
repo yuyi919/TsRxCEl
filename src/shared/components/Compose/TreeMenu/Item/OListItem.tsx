@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import * as React from 'react';
 import { IOItemProps } from './interface';
 
-export const OListItemSelect = observer(({ store, item, index, children, ...other }: (IOListItemSelectProps & IOItemProps)) => {
+export const OListItemSelect = observer(({ store, item, index, children, ...other }: IOListItemSelectProps) => {
     console.log("item selected update")
     return (
         <ListItem selected={store.isCurrentIndex(index)} {...other}>
@@ -11,7 +11,7 @@ export const OListItemSelect = observer(({ store, item, index, children, ...othe
         </ListItem>
     );
 });
-export interface IOListItemSelectProps extends ListItemProps {
+export interface IOListItemSelectProps extends ListItemProps, IOItemProps {
     icon?: React.ReactNode | any;
     collapse?: boolean;
 }

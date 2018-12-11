@@ -2,7 +2,7 @@ import { observer } from 'mobx-react';
 import * as React from 'react';
 import { IMenuItemConfig } from '..';
 import { IAutoListProps, OAutoList } from '../../AutoList';
-import { TreeMenuStore } from "../TreeMenuStore";
+import { ITreeMenuStore } from "../TreeMenuStore";
 
 export const OAutoMenuList = observer(({ store, itemFactory, ...other }: IOAutoMenuList) => {
     console.log("menu update")
@@ -16,5 +16,5 @@ export interface IOAutoMenuList extends IAutoListProps<IMenuItemConfig> {
     /**
      * TreeMenuStore
      */
-    store: TreeMenuStore;
+    store: ITreeMenuStore;
 }

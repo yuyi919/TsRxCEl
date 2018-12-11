@@ -3,7 +3,7 @@ export interface IDataListStoreBase<T> {
     setDataList(dataList: Array<T>): this;
     getDataList(): Array<T>;
     setDataItem(index: number, nextData: T, forceUpdate: boolean): this;
-    getDataItem(index: number, transform: (index: number, item: T, store?: IDataListStoreBase<T>) => T): T | null;
+    getDataItem(index: number, transform?: (index: number, item: T, store?: IDataListStoreBase<T>) => T): T | null;
 }
 
 export interface IDataListStore<T, C = any> extends IDataListStoreBase<T> {
