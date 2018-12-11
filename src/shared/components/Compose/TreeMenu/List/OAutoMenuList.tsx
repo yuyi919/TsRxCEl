@@ -6,7 +6,7 @@ import { TreeMenuStore } from "../TreeMenuStore";
 
 export const OAutoMenuList = observer(({ store, itemFactory, ...other }: IOAutoMenuList) => {
     console.log("menu update")
-    return <OAutoList<IMenuItemConfig> data={store.data} itemFactory={itemFactory} {...other} />;
+    return <OAutoList<IMenuItemConfig> data={store.getDataList()} itemFactory={itemFactory} {...other} />;
 });
 
 /**

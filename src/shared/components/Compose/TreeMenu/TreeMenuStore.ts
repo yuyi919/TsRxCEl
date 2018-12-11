@@ -20,8 +20,8 @@ export class TreeMenuStore extends DataListStore<IMenuItemConfig, ITreeMenuConfi
         return this.getChildrenStore(this.selectedIndex);
     }
     @computed public get currentTreeIndex(): Array<number> {
-        const { parentIndexList = [] } = this.config;
-        return [...parentIndexList, this.selectedIndex];
+        const { rootRouteList = [] } = this.config;
+        return [...rootRouteList, this.selectedIndex];
     };
 
     constructor(defaultData: Array<IMenuItemConfig>, config: ITreeMenuConfig, level: number = 0, root?: TreeMenuStore) {
@@ -39,8 +39,8 @@ export class TreeMenuStore extends DataListStore<IMenuItemConfig, ITreeMenuConfi
 
     @action
     public onItemClick({ index, nativeEvent }: IItemClickEvent) {
-        const { parentIndexList = [] } = this.config;
-        const nextTreeIndex = [...parentIndexList, index];
+        const { rootRouteList = [] } = this.config;
+        const nextTreeIndex = [...rootRouteList, index];
         if (this.root != null) {
             console.log("确认选中，开始传递", nextTreeIndex)
             this.root.selectedByTree(nextTreeIndex);
@@ -74,14 +74,14 @@ export class TreeMenuStore extends DataListStore<IMenuItemConfig, ITreeMenuConfi
     public getChildrenStore = (index: number): TreeMenuStore => {
         // 不存在则新建一个store
         if (!this.childrenStore[index]) {
-            const { parentIndexList = [], ...other } = this.config;
+            const { rootRouteList = [], ...other } = this.config;
             const item = this.getDataItem(index);
             if (item != null) {
                 const children = item.children;
                 if (children && children.length > 0) {
                     const nextConfig: ITreeMenuConfig = {
                         ...other,
-                        parentIndexList: [...parentIndexList, index]
+                        rootRouteList: [...rootRouteList, index]
                     }
                     this.childrenStore[index] = new TreeMenuStore(children, nextConfig, this.level + 1, this.root);
                 }
@@ -107,7 +107,7 @@ export class TreeMenuStore extends DataListStore<IMenuItemConfig, ITreeMenuConfi
         // 如果在选中树的范围
         if (stepIndex != undefined) {
             // 清理不同分支
-            if (!this.isCurrent(stepIndex) && this.currentSelectedStore != null) {
+            if (!this.isCurrentIndex(stepIndex) && this.currentSelectedStore != null) {
                 // console.log(`第${this.level}级, 清理 ${this.currentItem!.title} 已选中的子项`)
                 this.currentSelectedStore.clearAllSelected();
             }
@@ -121,7 +121,11 @@ export class TreeMenuStore extends DataListStore<IMenuItemConfig, ITreeMenuConfi
     }
 }
 export interface ITreeMenuStore extends IDataListStore<IMenuItemConfig, ITreeMenuConfig> {
+    level: number;
+    root: ITreeMenuStore;
+    childrenStore: ITreeMenuStore[];
     collapse(index: number): this;
     isCollapse(index: number): boolean;
     getChildrenStore(index: number): TreeMenuStore;
+    onItemClick({ index, nativeEvent }: IItemClickEvent): void;
 }

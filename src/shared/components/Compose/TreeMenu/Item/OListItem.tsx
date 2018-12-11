@@ -3,29 +3,26 @@ import { observer } from 'mobx-react';
 import * as React from 'react';
 import { IOItemProps } from './interface';
 
-export const OListItemSelect = observer(({ store, index, children, ...other }: (IOListItemSelectProps & IOItemProps)) => {
+export const OListItemSelect = observer(({ store, item, index, children, ...other }: (IOListItemSelectProps & IOItemProps)) => {
     console.log("item selected update")
-    const item = store.getDataItem(index);
-    if(item!=null){
-        return (
-            <ListItem selected={item.selected} button={true} dense={true} {...other}>
-                {children}
-            </ListItem>
-        );
-    }
-    return null;
+    return (
+        <ListItem selected={store.isCurrentIndex(index)} {...other}>
+            {children}
+        </ListItem>
+    );
 });
 export interface IOListItemSelectProps extends ListItemProps {
     icon?: React.ReactNode | any;
     collapse?: boolean;
 }
 
-export const OListItem = observer(({ store, index, children, classes = {}, ...other }: IOItemProps) => {
+export const OListItem = observer(({ store, item, index, children, classes = {}, ...other }: IOItemProps) => {
     // console.log("item update")
     const clickHandler = (e: React.MouseEvent) => store.onItemClick({ index, nativeEvent: e });
     return (
-        <OListItemSelect
-            store={store}
+        <OListItemSelect button={true} dense={true}
+            store={store} 
+            item={item} 
             index={index}
             className={classes["nested" + (store.level + 1)]!}
             onClick={clickHandler}

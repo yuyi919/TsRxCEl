@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import * as React from 'react';
 // import { IMenuItemConfig } from '.';
 import { TreeMenuStore } from "../TreeMenuStore";
+import { IMenuItemConfig } from './interface';
 import { OCollapseIcon, OItemIcon } from './OItemIcon';
 import { OListItem } from './OListItem';
 import { OListItemText } from './OListItemText';
@@ -10,13 +11,13 @@ import { OListItemText } from './OListItemText';
 @observer
 export class OTreeMenuItem extends React.Component<IOTreeMenuItemProps> {
     public render() {
-        const { index, store, children, ...other } = this.props;
+        const { index, item, store, children, ...other } = this.props;
         // console.log(item)
         return (
-            <OListItem store={store} index={index} {...other}>
-                <OItemIcon store={store} index={index}/>
-                <OListItemText store={store} index={index}/>
-                <OCollapseIcon index={index} store={store} />
+            <OListItem item={item} store={store} index={index} {...other}>
+                <OItemIcon item={item} store={store} index={index}/>
+                <OListItemText item={item} store={store} index={index}/>
+                <OCollapseIcon item={item} index={index} store={store} />
             </OListItem>
         );
     }
@@ -35,5 +36,6 @@ export class OTreeMenuItem extends React.Component<IOTreeMenuItemProps> {
 // };
 export interface IOTreeMenuItemProps extends ListItemProps {
     index: number;
+    item: IMenuItemConfig;
     store: TreeMenuStore;
 }

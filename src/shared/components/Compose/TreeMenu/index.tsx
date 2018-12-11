@@ -23,4 +23,5 @@ export class CollapseMenu extends React.Component<ITreeMenuContainerProps & Coll
 export * from './Factory';
 export * from './interface';
 export * from './Item';
+export * from './List';
 export * from './TreeMenuStore';

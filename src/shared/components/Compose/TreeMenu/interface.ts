@@ -12,16 +12,11 @@ export interface ITreeMenuConfig<T = IMenuItemConfig> extends IDataListConfig<IM
     /**
      * 
      */
-    parentIndexList?: Array<number>;
+    rootRouteList?: Array<number>;
     /**
-     * 
-     */
-    selectedTreeList?: Array<number>;
-    /**
-     * 
+     * 是否折叠
      */
     collapse?: boolean;
-
 }
 
 /**
@@ -31,7 +26,7 @@ export interface ITreeMenuContainerProps {
     /**
      * 父级列表中的索引
      */
-    index?: number; 
+    index?: number;
     /**
      * 父级列表Store
      */

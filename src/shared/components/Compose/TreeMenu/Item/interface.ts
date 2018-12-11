@@ -1,8 +1,9 @@
 import { IDataListItem } from "src/shared/logic";
-import { TreeMenuStore } from "../TreeMenuStore";
+import { ITreeMenuStore } from "../TreeMenuStore";
 
 export interface IOItemProps {
-    store: TreeMenuStore;
+    store: ITreeMenuStore;
+    item?: IMenuItemConfig;
     index: number;
     [key: string]: any;
 }

@@ -24,10 +24,11 @@ export const TreeMenuFactory = (container: IReactComponent<ITreeMenuContainerPro
     const CTreeMenu = observer(class OTreeItemList extends React.Component<IOTreeListProps, any> {
         public getItem = (item: IMenuItemConfig, index: number): JSX.Element => {
             const { classes = {}, store } = this.props;
+            item.index = index;
             const nextStore = store.getChildrenStore(index)
             return (
                 <React.Fragment key={index} >
-                    <OTreeMenuItem index={index} store={store} />
+                    <OTreeMenuItem item={item} index={index} store={store} />
                     {
                         nextStore && 
                             <InnerContainer index={index} store={store}>

@@ -8,9 +8,8 @@ export const CListItemText = ({ title, ...other }: ListItemTextProps) => {
     return <ListItemText primary={title} {...other} />;
 };
 
-export const OListItemText = observer(({ store, index }: IOItemProps) => {
+export const OListItemText = observer(({ item }: IOItemProps) => {
     // console.log("text update")
-    const item = store.getDataItem(index);
     if (item != null) {
         return <CListItemText inset={true} title={item.title} />;
     }
