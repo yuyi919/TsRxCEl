@@ -28,7 +28,7 @@ export const TreeMenuFactory = (container: IReactComponent<ITreeMenuContainerPro
             const nextStore = store.getChildrenStore(index)
             return (
                 <React.Fragment key={index} >
-                    <OTreeMenuItem item={item} index={index} store={store} />
+                    <OTreeMenuItem item={item} index={index} store={store} classes={classes}/>
                     {
                         nextStore && 
                             <InnerContainer index={index} store={store}>

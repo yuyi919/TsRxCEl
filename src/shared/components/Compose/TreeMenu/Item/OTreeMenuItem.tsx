@@ -7,11 +7,12 @@ import { OListItem } from './OListItem';
 import { OListItemText } from './OListItemText';
 
 export type IOTreeMenuItemProps = ListItemProps & IOItemProps;
-export const OTreeMenuItem = observer(({ index, item, store, children, ...other }: IOTreeMenuItemProps)=> (
-    <OListItem item={item} store={store} index={index} {...other}>
-        <OItemIcon item={item} store={store} index={index}/>
-        <OListItemText item={item} store={store} index={index}/>
-        <OCollapseIcon item={item} index={index} store={store} />
+export const OTreeMenuItem = observer(({ children, ...other }: IOTreeMenuItemProps)=> (
+    <OListItem {...other}>
+        <OItemIcon {...other}/>
+        <OListItemText {...other} />
+        { children }
+        <OCollapseIcon {...other} />
     </OListItem>
 ));
 // @observer

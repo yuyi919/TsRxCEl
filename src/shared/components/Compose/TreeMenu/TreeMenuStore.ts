@@ -59,9 +59,9 @@ export class TreeMenuStore extends DataListStore<IMenuItemConfig, ITreeMenuConfi
 
     @action
     public collapse(index: number): this {
-        console.log(index, this.collapseIndex)
+        // console.log(index, this.collapseIndex)
         this.collapseIndex = (this.collapseIndex == index) ? null : index;
-        console.log(this.collapseIndex)
+        // console.log(this.collapseIndex)
         return this;
     }
 
@@ -84,15 +84,16 @@ export class TreeMenuStore extends DataListStore<IMenuItemConfig, ITreeMenuConfi
                     this.childrenStore[index] = new TreeMenuStore(children, nextConfig, this.level + 1, this.root);
                 }
             }
+            // throw new Error("");
         }
         return this.childrenStore[index];
     }
 
-    public clearTreeSelected(): void {
+    public async clearTreeSelected(): Promise<any> {
         for (const store of this.childrenStore) {
             // 递归清理全部子store
             if (store) {
-                store.clearTreeSelected();
+                await store.clearTreeSelected();
             }
         }
         // 最后再清理自身
@@ -100,22 +101,24 @@ export class TreeMenuStore extends DataListStore<IMenuItemConfig, ITreeMenuConfi
     }
 
     // 向下传递
-    public selectedByTree(currentTreeIndex: Array<number>) {
+    public async selectedByTree(currentTreeIndex: Array<number>) {
         const stepIndex = currentTreeIndex[this.level];
         // 如果在选中树的范围
+        console.time("end"+this.level)
         if (stepIndex != undefined) {
             // 清理不同分支
             if (!this.isCurrentIndex(stepIndex) && this.currentSelectedStore != null) {
                 // console.log(`第${this.level}级, 清理 ${this.currentItem!.title} 已选中的子项`)
-                this.currentSelectedStore.clearTreeSelected();
+                await this.currentSelectedStore.clearTreeSelected();
             }
 
             this.select(stepIndex);
             // console.log(`第${this.level}级, 选中：${this.currentItem!.title}`)
             if (this.currentSelectedStore != null) {
-                this.currentSelectedStore.selectedByTree(currentTreeIndex);
+                await this.currentSelectedStore.selectedByTree(currentTreeIndex);
             }
         }
+        console.timeEnd("end"+this.level)
     }
 }
 

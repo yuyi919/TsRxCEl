@@ -16,10 +16,7 @@ require('../config/env');
 
 const fs = require('fs');
 const chalk = require('chalk');
-const express = require('express');
 const webpack = require('webpack');
-const webpackDevMiddleware = require('webpack-dev-middleware');
-const webpackHotMiddleware = require('webpack-hot-middleware');
 const { spawn } = require('child_process');
 const WebpackDevServer = require('webpack-dev-server');
 const clearConsole = require('react-dev-utils/clearConsole');
@@ -83,11 +80,7 @@ choosePort(HOST, DEFAULT_PORT)
       urls.lanUrlForConfig
     );
     const devServer = new WebpackDevServer(compiler, serverConfig);
-    // const app = express();
-    // const wdm = webpackDevMiddleware(compiler, serverConfig);
-    // app.use(wdm);
-    // app.use(webpackHotMiddleware(compiler, serverConfig));
-    // // Launch WebpackDevServer.
+    // Launch WebpackDevServer.
     devServer.listen(port, HOST, err => {
       if (err) {
         return console.log(err);

@@ -3,7 +3,7 @@
 import { observer } from 'mobx-react';
 import * as React from 'react';
 
-export interface IAutoListProps<T = object> {
+export interface IFactoryListProps<T = object> {
     /**
      * 数据列表
      */
@@ -16,7 +16,7 @@ export interface IAutoListProps<T = object> {
      */
     itemFactory: (item: T, index: number) => JSX.Element;
 }
-export interface IAutoListState<T = object> {
+export interface IFactoryListState<T = object> {
     data: Array<T>;
 }
 
@@ -24,10 +24,11 @@ export interface IAutoListState<T = object> {
  * 有就遍历无就返回Null
  */
 @observer
-export class OAutoList<T> extends React.Component<IAutoListProps<T>> {
+export class OFactoryList<T> extends React.Component<IFactoryListProps<T>, IFactoryListState<T>> {
     public render() {
         const { itemFactory, data = [] } = this.props;
         const list = data.length > 0 ? data.map(itemFactory) : null
+        console.log("update")
         return <React.Fragment>{list}</React.Fragment>
     }
 }

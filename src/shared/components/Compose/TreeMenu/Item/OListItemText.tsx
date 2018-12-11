@@ -8,10 +8,10 @@ export const CListItemText = ({ title, ...other }: ListItemTextProps) => {
     return <ListItemText primary={title} {...other} />;
 };
 
-export const OListItemText = observer(({ item }: IOItemProps) => {
+export const OListItemText = observer(({ store, item, classes }: IOItemProps) => {
     // console.log("text update")
     if (item != null) {
-        return <CListItemText inset={true} title={item.title} />;
+        return <CListItemText inset={true} title={item.title} className={classes["nested" + (store.level + 1)]} />;
     }
     return null;
 });
