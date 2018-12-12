@@ -1,7 +1,7 @@
 import { ECharts } from 'echarts';
 import { action, observable } from 'mobx';
-import * as rx from 'rxjs';
-import * as operator from 'rxjs/operators';
+import { fromEvent } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { EventEmitter } from '../../utils/EventEmitter';
 
 export class ChartsInstance {
@@ -12,8 +12,8 @@ export class ChartsInstance {
     public chartsDestroy: EventEmitter<any> = new EventEmitter<any>();
     public constructor(event: any) {
         this.setInstance(event);
-        rx.fromEvent(window,'resize').pipe(
-            operator.takeUntil(this.chartsDestroy)
+        fromEvent(window,'resize').pipe(
+            takeUntil(this.chartsDestroy)
         )
     }
     @action 

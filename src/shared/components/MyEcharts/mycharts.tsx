@@ -2,7 +2,7 @@ import ReactEcharts, { ObjectMap } from 'echarts-for-react';
 import { action, computed, observable, toJS } from 'mobx';
 import { Provider } from 'mobx-react';
 import * as React from 'react';
-import * as rx from 'rxjs';
+import { Observable } from 'rxjs';
 import { onDestroy, RxcFor, RxcIf, RxComponent } from 'src/shared/utils';
 import { IOptionsTree } from '.';
 import { ChartsInstance } from './chartsInstance';
@@ -10,7 +10,7 @@ import { ChartsInstance } from './chartsInstance';
 
 export interface IMyEchartsProps {
     className?: string;
-    dataSet?: Array<ObjectMap> | rx.Observable<Array<ObjectMap>>;
+    dataSet?: Array<ObjectMap> | Observable<Array<ObjectMap>>;
     option?: IOptionsTree;
     theme?: string;
     onUpdate?: any;

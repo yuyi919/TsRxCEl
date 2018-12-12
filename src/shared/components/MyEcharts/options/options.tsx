@@ -2,8 +2,7 @@ import * as deepmerge from 'deepmerge';
 import { ObjectMap } from 'echarts-for-react';
 import { inject, observer, Provider } from 'mobx-react';
 import * as React from 'react';
-import * as rx from 'rxjs';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable, of } from 'rxjs';
 import { filter, map, switchMap, takeUntil } from 'rxjs/operators';
 import { OptionsObservableList } from '.';
 import { Echarts, ISeriesOption } from '..';
@@ -53,7 +52,7 @@ export class Options extends React.Component<IOptionsProps, any> {
         console.log('option');
     }
     public getOptionsTreeObs(): Observable<IOptionsTree> {
-        return rx.combineLatest(
+        return combineLatest(
             this.seriesList.getComputedObs(),
             this.xAxisList.getComputedObs(),
             this.yAxisList.getComputedObs()
@@ -65,7 +64,7 @@ export class Options extends React.Component<IOptionsProps, any> {
             filter((options: any) => {
                 return Object.keys(options).map((key:string)=>options[key]).some((i:any)=>i!=null);
             }),
-            switchMap((list: any)=>rx.of(list))
+            switchMap((list: any)=>of(list))
         )
     };
     public componentDidUpdate() {

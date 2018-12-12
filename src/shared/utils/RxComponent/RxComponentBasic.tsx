@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import * as Rx from 'rxjs';
+import { merge, of } from 'rxjs';
 import { filter, map, share, takeUntil } from 'rxjs/operators';
 import { Observable } from '..';
 import { EventEmitter } from '../EventEmitter';
@@ -72,8 +72,8 @@ export abstract class RxComponentBasic extends Component<any,any> {
         }
     }
     public getInnerInstance() {
-        return Rx.merge(
-            Rx.of(this.innerInstance),
+        return merge(
+            of(this.innerInstance),
             this.$innerComponentMount.pipe(
                 takeUntil(this.$onDestroy),
                 map((refEvent: RxcNativeEvent)=>refEvent.args[0])

@@ -1,7 +1,8 @@
-import { ipcMain, IpcMessageEvent } from 'electron';
-import * as superagent from 'superagent';
-import { WindowManager } from './main/EventListener/WindowManager';
-import { HttpClient } from './main/index';
+import { app } from 'electron';
+// import { SuperAgent } from 'superagent';
+// import * as path from 'path';
+// import { WindowManager } from './main/index';
+// import { HttpClient } from './main/index';
 
 const serve: boolean = process.env.NODE_ENV === 'development';
 
@@ -17,51 +18,70 @@ if (process.env.NODE_ENV === 'development') {
     require('module').globalPaths.push(p); // eslint-disable-line
 }
 
-const windowManager: WindowManager = new WindowManager(serve);
+const MainLibrary = require('../build/main/index');
 
 try {
-    windowManager.process();
-    let http: HttpClient;
-    ipcMain.on('http-get', (event: IpcMessageEvent, url: string, param?: object, ...args: any[]) => {
-        superagent.get(encodeURI(url)).end((err: any, res: any) => {
-            if (err) {
-                console.log(err);
-            }
-            event.sender.send('http-get', res.text);
-        });
-    })
-
-
-    ipcMain.on('get', (event: IpcMessageEvent, url: string, param?: object, ...args: any[]) => {
-        try {
-            if (!http) {
-                http = new HttpClient('localhost', 8080);
-            }
-            console.log(url, param);
-            http.get(url, param || {}).then(response => {
-                event.sender.send(response)
-            }).catch(e => {
-                event.sender.send(e)
+    console.log(MainLibrary);
+    // const superAgent: SuperAgent<any> = require('superagent');
+    const windowManager = new MainLibrary.WindowManager(serve, ()=>{
+        if(serve){
+            const path = require('path'); // eslint-disable-line
+            require('electron-reload')(__dirname, {
+                electron: require(path.join(__dirname, `../node_modules/electron`))
             });
-        } catch (e) {
-            event.sender.send(e);
+            console.log("dev reload");
+            return 'http://localhost:3000/';
+
+        } else {
+            const path = require('path'); // eslint-disable-line
+            console.log(path.join(__dirname, './index.html'))
+            return __dirname;
         }
-    })
-    ipcMain.on('post', (event: IpcMessageEvent, url: string, param?: object, ...args: any[]) => {
-        try {
-            if (!http) {
-                http = new HttpClient('localhost', 8080);
-            }
-            console.log(url, param);
-            http.post(url, param || {}).then(response => {
-                event.sender.send(response);
-            }).catch(e => event.sender.send(e));
-        } catch (e) {
-            event.sender.send(e);
-        }
-    })
+    });
+    console.log(windowManager);
+    windowManager.process();
+    // let http: HttpClient;
+    // ipcMain.on('http-get', (event: IpcMessageEvent, url: string, param?: object, ...args: any[]) => {
+    //     superAgent.get(encodeURI(url)).end((err: any, res: any) => {
+    //         if (err) {
+    //             console.log(err);
+    //         }
+    //         event.sender.send('http-get', res.text);
+    //     });
+    // })
+
+
+    // ipcMain.on('get', (event: IpcMessageEvent, url: string, param?: object, ...args: any[]) => {
+    //     try {
+    //         if (!http) {
+    //             http = new HttpClient('localhost', 8080);
+    //         }
+    //         console.log(url, param);
+    //         http.get(url, param || {}).then(response => {
+    //             event.sender.send(response)
+    //         }).catch(e => {
+    //             event.sender.send(e)
+    //         });
+    //     } catch (e) {
+    //         event.sender.send(e);
+    //     }
+    // })
+    // ipcMain.on('post', (event: IpcMessageEvent, url: string, param?: object, ...args: any[]) => {
+    //     try {
+    //         if (!http) {
+    //             http = new HttpClient('localhost', 8080);
+    //         }
+    //         console.log(url, param);
+    //         http.post(url, param || {}).then(response => {
+    //             event.sender.send(response);
+    //         }).catch(e => event.sender.send(e));
+    //     } catch (e) {
+    //         event.sender.send(e);
+    //     }
+    // })
 
 } catch (e) {
     // Catch Error
     // throw e;
+    app.quit();
 }

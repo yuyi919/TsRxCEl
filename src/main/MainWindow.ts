@@ -2,6 +2,7 @@ import { BrowserWindow, screen, Size } from 'electron';
 // import { Menu } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+import { getAppPath } from './EventListener';
 import { WindowChannel } from './EventListener/WindowChannel';
 // import { execFile } from 'child_process';
 // import { main as mainMenu } from './menu';
@@ -15,7 +16,10 @@ const getCenterWindow = (screensize: Size, windowSize: Size) => {
         frame: false,
         useContentSize: true,
         resizable: false,
-        show: false
+        show: false,
+        // webPreferences: {
+        //     webSecurity: false
+        // }
     }
 }
 export class MainWindow {
@@ -26,7 +30,7 @@ export class MainWindow {
     constructor(development: boolean){
         this.development = development;
     }
-    public create(): BrowserWindow {
+    public create(callback?: getAppPath): BrowserWindow {
         console.log('********** is development? **************', this.development);
         const electronScreen = screen;
         const screenSize = electronScreen.getPrimaryDisplay().workAreaSize;
@@ -39,22 +43,15 @@ export class MainWindow {
         this.service = new WindowChannel(this.win);
         this.win.setAspectRatio(16 / 9, {width:0,height:0});
     
-        if (this.development) {
-            require('electron-reload')(__dirname, {
-                electron: require(path.join(__dirname, `../../node_modules/electron`))
-            });
-            this.win.loadURL('http://localhost:3000/');
-            // this.win.loadURL(url.format({
-            //     pathname: path.join(__dirname, '../../public/index.html'),
-            //     protocol: 'file:',
-            //     slashes: true
-            // }));
-        } else {
+        if (this.development && (callback instanceof Function)) {
+            this.win.loadURL(callback(this.win));
+        } else if(callback instanceof Function){
             this.win.loadURL(url.format({
-                pathname: path.join(__dirname, '../../build/index.html'),
+                pathname: path.join(callback(this.win), './index.html'),
                 protocol: 'file:',
                 slashes: true
             }));
+            this.win.webContents.toggleDevTools();
         }
     
         this.win.webContents.on("dom-ready",e=>{

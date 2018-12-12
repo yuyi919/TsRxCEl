@@ -1,5 +1,4 @@
-import * as rx from 'rxjs';
-import { Observable } from 'rxjs';
+import { combineLatest, merge, Observable, of } from 'rxjs';
 import { distinctUntilChanged, map, share, switchMap, takeUntil } from 'rxjs/operators';
 import { EventEmitter } from '../../../utils';
 
@@ -49,8 +48,8 @@ export class OptionsObservableList<T> {
      * 获取最终obs
      */
     public getComputedObs(): Observable<{[key:string]: Array<T>}> {
-        return rx.merge(
-            rx.of(this.obsList),
+        return merge(
+            of(this.obsList),
             this.onChanged
         ).pipe(
             takeUntil(this.onDispose),
@@ -58,9 +57,9 @@ export class OptionsObservableList<T> {
                 obsList.filter((obs: Observable<T> | null) => obs) as Array<Observable<T>>
             ),
             switchMap((obsList: Array<Observable<T>>) => {
-                return rx.merge(
-                    rx.of(null), // 确保一定能发送一个值
-                    rx.combineLatest(...obsList).pipe(takeUntil(this.onDispose))
+                return merge(
+                    of(null), // 确保一定能发送一个值
+                    combineLatest(...obsList).pipe(takeUntil(this.onDispose))
                 ).pipe(
                     distinctUntilChanged(),
                     takeUntil(this.onDispose),

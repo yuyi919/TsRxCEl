@@ -1,4 +1,4 @@
-import * as Rx from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { filter, map, share, take, takeUntil, tap } from 'rxjs/operators';
 import { EventEmitter } from '..';
 import { RxcEventGroup, RxcEventType, rxcEventTypes } from './interface';
@@ -41,7 +41,7 @@ export class RxComponentProvider {
      * @param type 限定触发事件类型
      * @param instance 限定触发事件所属component的实例
      */
-    public getRxEventEmitter(type?: RxcEventType, instance?: RxComponentBasic, destroyEmitter?: Rx.Observable<any>): Rx.Observable<RxcNativeEvent> {
+    public getRxEventEmitter(type?: RxcEventType, instance?: RxComponentBasic, destroyEmitter?: Observable<any>): Observable<RxcNativeEvent> {
         /** RxcEvent集合 */
         let config: RxcEventGroup;
         if (instance && this.rxcAndEventMap.has(instance)) {
@@ -96,8 +96,8 @@ export class RxComponentProvider {
     /**内部方法
      * @param type 
      */
-    private registerRxcEvent(type: RxcEventType): Rx.Observable<IRxcEvent> {
-        return Rx.from(this.RxcEventEmitter).pipe(
+    private registerRxcEvent(type: RxcEventType): Observable<IRxcEvent> {
+        return from(this.RxcEventEmitter).pipe(
             filter((e: IRxcEvent) => (e.type == type)),
             takeUntil(this.onDispose),
             share()
@@ -106,8 +106,8 @@ export class RxComponentProvider {
     /** 将底层事件流转化为高层事件流
      * @param input 底层流
      */
-    private toFinalEventOutput(input: Rx.Observable<IRxcEvent>, instance?: RxComponentBasic, dispose?: Rx.Observable<any>, type?: RxcEventType): Rx.Observable<RxcNativeEvent> {
-        return Rx.from(input).pipe(
+    private toFinalEventOutput(input: Observable<IRxcEvent>, instance?: RxComponentBasic, dispose?: Observable<any>, type?: RxcEventType): Observable<RxcNativeEvent> {
+        return from(input).pipe(
             takeUntil(this.onDispose),
             filter((e: IRxcEvent) => instance ? (e.instance == instance) : true), // 判断是否是对象组件
             dispose ? takeUntil(dispose) : take(1),

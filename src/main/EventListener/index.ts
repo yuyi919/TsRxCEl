@@ -4,6 +4,10 @@ import { Observable, Observer, Subscription } from 'rxjs';
 import { share } from 'rxjs/operators';
 import '../../global';
 
+export * from './FileChannel';
+export * from './WindowChannel';
+export * from './WindowManager';
+
 export interface IpcMessageResponse<T = any> {
     event: IpcMessageEvent;
     response: T;
@@ -15,7 +19,7 @@ export type IpcMessageFunc<T> = (event: IpcMessageResponse<T>) => T;
  */
 export class IpcEventListener<T = any, S = any> extends Observable<IpcMessageResponse<T>> {
     private channelName: string;
-    private listeners: Map<IpcMessageFunc<T>,Subscription> = new Map<IpcMessageFunc<T>, Subscription>();
+    private listeners: Map<IpcMessageFunc<T>, Subscription> = new Map<IpcMessageFunc<T>, Subscription>();
     /**
      * 创建频道监听
      * @param channelName  频道名
@@ -68,7 +72,7 @@ export class IpcEventListener<T = any, S = any> extends Observable<IpcMessageRes
     }
 }
 export interface IEventListenClass<T extends object> extends Type.ClassConstructor {
-    new(...arg:any[]): {
+    new(...arg: any[]): {
         onDestroy(): void;
     } & T;
 }
@@ -83,14 +87,14 @@ export function IpcListener<T extends object>(target: IEventListenClass<T>): IEv
             const listenerMap: Map<string, IpcEventListener<any>> = new Map<string, IpcEventListener<any>>();
             const instance = Reflect.construct(proxyTarget, args, handler);
             Reflect.get(instance, '$$$listener').forEach((methodList: string[], channelName: string) => {
-                const listener: IpcEventListener<any> = new IpcEventListener<any>("$$$IPCL_"+channelName);
+                const listener: IpcEventListener<any> = new IpcEventListener<any>("$$$IPCL_" + channelName);
                 methodList.forEach((methodName: string) => {
                     const method = Reflect.get(instance, methodName, instance);
                     listener.listen((e: IpcMessageResponse<any>) => {
                         console.log(e);
                         const response = Reflect.apply(method, instance, [e.response, e.event])
-                        if (response instanceof Observable){
-                            response.subscribe(asyncResponse=>{
+                        if (response instanceof Observable) {
+                            response.subscribe(asyncResponse => {
                                 listener.return(e.event, asyncResponse);
                             })
                         } else {

@@ -3,38 +3,42 @@ import { MainWindow } from '../MainWindow';
 import { FileChannel } from './FileChannel';
 import { channel, IpcListener } from './index';
 
+export type getAppPath = (win: BrowserWindow) => string;
+
 @IpcListener
 export class WindowManager {
     private mainWindow: MainWindow;
     private win: BrowserWindow | null | undefined = null;
     private serve: boolean;
     private channels: FileChannel;
+    private callback: getAppPath | undefined;
 
-    constructor(serve: boolean){
+    constructor(serve: boolean, callback?: getAppPath) {
         this.serve = serve;
         this.windowCreate();
+        this.callback = callback;
         this.channels = new FileChannel();
     }
-    
+
     @channel<boolean, boolean>('windowReCreate')
     public windowCreate(): boolean {
         this.mainWindow = new MainWindow(this.serve);
-        if(this.win != null){
+        if (this.win != null) {
             const last = this.win;
-            this.win = this.mainWindow.create();
+            this.win = this.mainWindow.create(this.callback);
             last.close();
         }
         return true;
     }
 
-    public process(){
+    public process(): this {
         // This method will be called when Electron has finished
         // initialization and is ready to create browser windows.
         // Some APIs can only be used after this event occurs.
         app.on('ready', () => {
             if (this.win === null) {
                 console.log("Dev Server Starting");
-                this.win = this.mainWindow.create();
+                this.win = this.mainWindow.create(this.callback);
             }
             // win.webContents.openDevTools();
             // require('electron-react-devtools').install();
@@ -57,6 +61,7 @@ export class WindowManager {
                 this.win = this.mainWindow.create();
             }
         });
+        return this;
     }
 
     public onDestroy(): void {

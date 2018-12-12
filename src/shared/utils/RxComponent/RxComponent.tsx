@@ -1,6 +1,6 @@
 import { inject, observer } from 'mobx-react';
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { createPortal } from 'react-dom';
 import 'reflect-metadata';
 import { Observable, Subscription } from 'rxjs';
 // import { takeUntil } from 'rxjs/operators';
@@ -48,7 +48,7 @@ export function RxComponent(config: IRxComponentConfig) {
         const proxyRender = (render: any, handler: ProxyHandler<any>, args: Array<any>) => {
             const r = Reflect.apply(render, handler, args)
             if (config.portal) {
-                return ReactDOM.createPortal(r, config.portal)
+                return createPortal(r, config.portal)
             } else {
                 return r;
             }

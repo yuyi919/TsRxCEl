@@ -1,6 +1,5 @@
 import * as React from 'react';
-import * as rx from 'rxjs';
-import { Observable } from 'rxjs';
+import { merge, Observable, of } from 'rxjs';
 import { map, share, takeUntil } from 'rxjs/operators';
 import { EventEmitter } from 'src/shared/utils/EventEmitter';
 import { onChanges, onDestroy, onInit, rxcDestroy, RxcInnerComponentProps, RxComponent } from 'src/shared/utils/RxComponent';
@@ -107,8 +106,8 @@ export class Series extends React.Component<ISeriesProps, ISeriesState> {
     console.log('mount', this);
   }
   public componentDidMount(@rxcDestroy() destroy?: Observable<any>) {
-    const subject: rx.Observable<ISeriesOption> = rx.merge(
-      rx.of(this.option), // 初始流
+    const subject: Observable<ISeriesOption> = merge(
+      of(this.option), // 初始流
       this.setOption // 更新流
     ).pipe(
       takeUntil(destroy!),
