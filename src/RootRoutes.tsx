@@ -9,10 +9,10 @@ import { HashRouter } from "react-router-dom";
 // import { CounterPage } from "./components/CounterPage";
 // import { EchartsTestPage } from './components/EchartTestPage';
 import IndexPage from './components/IndexPage';
-import { RootStore } from "./shared";
+import { AppStore } from "./shared";
 // import { LiteButton } from './shared/components/Lite';
 
-const stores = new RootStore();
+const appStore = new AppStore();
 
 const theme: Theme = createMuiTheme({
     typography: {
@@ -29,12 +29,12 @@ const theme: Theme = createMuiTheme({
     },
 })
 export default function RootRoutes(){
-    console.log(theme);
+    // console.log(theme);
     return (
         <>
             <CssBaseline />
             <MuiThemeProvider theme={theme}>
-                <Provider appState={stores}>
+                <Provider appStore={appStore}>
                     <HashRouter>
                         <IndexPage>
                             {/* <LiteButton type='raised' color='default' routerLink='/'>home</LiteButton>

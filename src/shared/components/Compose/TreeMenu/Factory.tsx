@@ -1,11 +1,10 @@
 import { ListProps } from '@material-ui/core/List';
-import { withStyles } from '@material-ui/core/styles';
 import { IReactComponent, observer } from 'mobx-react';
 import * as React from 'react';
 import { IMenuItemConfig, ITreeMenuContainerProps } from '.';
 import { OTreeMenuItem } from "./Item";
 import { OAutoMenuList, OList } from './List';
-import { styles } from './styles';
+import withStyle from './styles';
 import { ITreeMenuStore } from "./TreeMenuStore";
 
 
@@ -47,5 +46,5 @@ export const TreeMenuFactory = (container: IReactComponent<ITreeMenuContainerPro
             )
         }
     })
-    return withStyles(styles)(CTreeMenu) as any
+    return withStyle(CTreeMenu) as any
 }

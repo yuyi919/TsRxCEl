@@ -1,9 +1,9 @@
 import { inject, observer } from "mobx-react";
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { RootStore } from "../../shared/stores";
-
+import { RootStore } from "src/shared/stores/test";
 import * as styles from "./styles.scss";
+
 
 @inject("appState")
 @observer
@@ -44,3 +44,4 @@ class CounterPage extends React.Component<{appState:RootStore}, {}> {
 }
 
 export { CounterPage };
+

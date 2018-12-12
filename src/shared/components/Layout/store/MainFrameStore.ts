@@ -55,36 +55,8 @@ export class MainFrameStore {
         if(item){
             console.log(item.title)
             // this.content = (item as any).content || [];
-            // this.title = item.title;
+            this.title = item.title;
         }
-       // console.log(toJS(e),parentIndexList)
-        // let current: Compose.IMenuItemConfig[] = this.menuList.data;
-        // let currentItem: Compose.IMenuItemConfig | null = null;
-        // // console.log("start", toJS(current))
-        // for (const i of parentIndexList) {
-        //     currentItem = current[i]
-        //     // console.log(toJS(currentItem))
-        //     if (currentItem) {
-        //         current = currentItem.children || []
-        //     } else {
-        //         break;
-        //     }
-        // }
-        // if (currentItem) {
-        //     currentItem.collapse = !currentItem.collapse;
-        //     currentItem.selected = true;
-        //     this.content = (currentItem as any).content || [];
-        //     this.title = currentItem.title;
-        // }
-        // if(this.selectedTree.length==0){
-        //     this.selectedTree = parentIndexList
-        // } else {
-        //     parentIndexList.forEach((i,index)=>{
-        //         this.selectedTree[index] = i
-        //     })
-        // }
-        // this.selectedTree = [...parentIndexList];
-        // console.log("end",this.selectedTree, toJS(this.menuList))
     }
 
     @action public openHandler = () => {

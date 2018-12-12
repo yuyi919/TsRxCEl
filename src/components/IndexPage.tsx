@@ -2,15 +2,14 @@
 // import List from '@material-ui/core/List';
 // import { Container } from './container';
 // import HttpService from 'src/shared/clientApi/http';
-import { toJS } from 'mobx';
-import { Provider } from 'mobx-react';
+// import { toJS } from 'mobx';
 import * as React from 'react';
-import Store, { MainFrame, MainFrameStore } from 'src/shared/components/Layout';
+import { MainFrame } from 'src/shared/components/Layout';
 import AulUtilPage from './AulUtilPage';
 
 export interface IIndexProps {
     children?: React.ReactNode | React.ReactNodeArray;
-    store?: MainFrameStore;
+    // appStore?: MainFrameStore;
 }
 
 export interface IIndexState {
@@ -27,7 +26,7 @@ export default class IndexPage extends React.Component<IIndexProps, IIndexState>
         }
     }
     public componentDidMount() {
-        console.log(toJS(Store))
+        // console.log(toJS(Store))
     }
     public onClick = () => {
         this.setState({ show: !this.state.show });
@@ -46,15 +45,16 @@ export default class IndexPage extends React.Component<IIndexProps, IIndexState>
         const { children } = this.props;
         // const { value, focus } = this.state;
         return (
-            <Provider store={Store}>
-                <MainFrame><AulUtilPage />{children}</MainFrame>
+            <MainFrame>
+                <AulUtilPage />
+                {children}
                 {/* <input value={value || (focus ? "" : "default")} onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
                 <Container>
                     <div>
                         <LiteButton type='contained' routerLink='/' onClick={this.onClick}> {this.state.show ? 'block' : 'none'} </LiteButton>
                     </div>
                 </Container> */}
-            </Provider>
+            </MainFrame>
         );
     }
 }

@@ -25,7 +25,7 @@ export function OListItemFactory(InnerComponent: IReactComponent<IOItemProps>) {
 }
 
 export const OListItem = observer(({ store, item, index, children, classes = {}, ...other }: IOItemProps) => {
-    console.log("item update", classes, "nested" + (store.level + 1))
+    // console.log("item update", classes, "nested" + (store.level + 1))
     const clickHandler = (e: React.MouseEvent) => store.onItemClick({ index, nativeEvent: e });
     return (
         <OListItemSelect button={true} dense={true}

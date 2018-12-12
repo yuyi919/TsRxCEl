@@ -1,4 +1,4 @@
-import { Theme } from '@material-ui/core/styles';
+import { Theme, withStyles } from '@material-ui/core/styles';
 import { styles as itemStyle} from './Item/styles';
 export const styles = (theme: Theme) => {
     return {
@@ -10,3 +10,5 @@ export const styles = (theme: Theme) => {
         ...itemStyle(theme)
     };
 };
+const withStyle = withStyles(styles);
+export default withStyle;

@@ -2,14 +2,15 @@ import { IconButton, PropTypes, Toolbar, Typography } from '@material-ui/core';
 import AppBar, { AppBarProps } from '@material-ui/core/AppBar'
 import * as React from 'react';
 
-interface ITopBarProps extends AppBarProps {
+export interface ITopBarProps extends AppBarProps {
     title?: string | React.ReactNode | any;
     icon?: React.ReactNode | any;
     color?: PropTypes.Color;
     children?: React.ReactNode | React.ReactNodeArray;
+    onIconClick?: React.MouseEventHandler<any>;
 }
 
-export const TopBar: React.SFC<ITopBarProps> = ({ position = 'static', color = 'default', icon, title, children, ...other }: ITopBarProps) => {
+export const TopBar: React.SFC<ITopBarProps> = ({ position = 'static', color = 'default', icon, title, children,onIconClick, ...other }: ITopBarProps) => {
     const styles = {
         grow: {
             flexGrow: 1,
@@ -22,7 +23,7 @@ export const TopBar: React.SFC<ITopBarProps> = ({ position = 'static', color = '
     return (
         <AppBar color={color} position={position} style={styles.grow} {...other}>
             <Toolbar>
-                {icon && <IconButton color="inherit" style={styles.menuButton}>{icon}</IconButton>}
+                {icon && <IconButton onClick={onIconClick} color="inherit" style={styles.menuButton}>{icon}</IconButton>}
                 <Typography variant='h6' style={styles.grow}>{title}</Typography>
                 {children}
             </Toolbar>
