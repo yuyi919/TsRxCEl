@@ -15,29 +15,3 @@ export const OTreeMenuItem = observer(({ children, ...other }: IOTreeMenuItemPro
         <OCollapseIcon {...other} />
     </OListItem>
 ));
-// @observer
-// export class OTreeMenuItem extends React.Component<IOTreeMenuItemProps> {
-//     public render() {
-//         const { index, item, store, children, ...other } = this.props;
-//         // console.log(item)
-//         return (
-//             <OListItem item={item} store={store} index={index} {...other}>
-//                 <OItemIcon item={item} store={store} index={index}/>
-//                 <OListItemText item={item} store={store} index={index}/>
-//                 <OCollapseIcon item={item} index={index} store={store} />
-//             </OListItem>
-//         );
-//     }
-// }
-// /**
-//  * 翻译器
-//  * @param index 数据索引
-//  * @param config 配置
-//  * @param store
-//  */
-// export const transformFunc = (index: number, config: IMenuItemConfig, store: TreeMenuStore) => {
-//     const { icon, children } = config;
-//     return Object.assign(config, {
-//         icon: icon || (children ? "LibraryBooks" : "Book")
-//     });
-// };

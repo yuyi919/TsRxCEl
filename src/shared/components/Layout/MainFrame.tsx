@@ -1,26 +1,26 @@
-import { StyledComponentProps } from '@material-ui/core/styles';
-import { IReactComponent, Provider } from 'mobx-react';
+import { Provider } from 'mobx-react';
 import * as React from 'react';
 import { FileDialog } from 'src/main/dialog';
 import { openAulFile, windowReCreate, windowReload } from 'src/shared/clientApi';
 import * as Lite from 'src/shared/components/Lite';
-import { AppChildContainer, IAppStoreInjectProps, IAppStoreProps } from 'src/shared/stores';
+import { AppChildContainer, AppStores } from 'src/shared/stores';
 import { ODrawer, OMainPanel, OTopBar } from './OComponent';
 import { MainFrameStore } from './store';
 import withStyle from './styles';
 
-export interface IMainFrameProps extends StyledComponentProps, IAppStoreProps {
+export interface IMainFrameProps {
     children?: React.ReactNode | React.ReactNodeArray;
 }
-export const MainFrame: IReactComponent<IMainFrameProps> = withStyle(
+
+export const MainFrame: AppStores.OComponent = withStyle(
     AppChildContainer(
-        ({ children, appStore, classes = {} }: IMainFrameProps & IAppStoreInjectProps) => {
+        ({ children, appStore, classes = {} }: AppStores.OStyledProps & AppStores.Adapter) => {
             const store: MainFrameStore = appStore.mainFrameStore;
             console.log(appStore,store);
             return (
                 <Provider mainFrameStore={store} classes={classes}>
                     <div className={classes.root}>
-                        <OTopBar>
+                        <OTopBar mainFrameStore={store}>
                             <Lite.LiteButton type='text' routerLink='/' onClick={recreate}>重启</Lite.LiteButton>
                             <Lite.LiteButton type='text' routerLink='/' onClick={reload}>重载</Lite.LiteButton>
                             <Lite.LiteButton type='text' routerLink='/' onClick={getPath}>选择文件路径</Lite.LiteButton>

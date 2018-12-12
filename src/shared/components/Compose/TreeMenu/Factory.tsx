@@ -20,9 +20,9 @@ export interface IOTreeListProps extends ListProps {
  */
 export const TreeMenuFactory = (container: IReactComponent<ITreeMenuContainerProps>) => {
     const InnerContainer: IReactComponent<ITreeMenuContainerProps> = observer(container);
-    const CTreeMenu = observer(class OTreeItemList extends React.Component<IOTreeListProps, any> {
-        public getItem = (item: IMenuItemConfig, index: number): JSX.Element => {
-            const { classes = {}, store } = this.props;
+    const getItemFactory = (props: IOTreeListProps) => {
+        return (item: IMenuItemConfig, index: number): JSX.Element => {
+            const { classes = {}, store } = props;
             item.index = index;
             const nextStore = store.getChildrenStore(index)
             return (
@@ -37,11 +37,13 @@ export const TreeMenuFactory = (container: IReactComponent<ITreeMenuContainerPro
                 </React.Fragment>
             );
         }
+    }
+    const CTreeMenu = observer(class OTreeItemList extends React.Component<IOTreeListProps, any> {
         public render() {
             const { classes = {}, sheader, store, ...other } = this.props;
             return (
                 <OList className={classes.root} sheader={sheader} {...other}>
-                    <OAutoMenuList store={store} itemFactory={this.getItem} />
+                    <OAutoMenuList store={store} itemFactory={getItemFactory(this.props)} />
                 </OList>
             )
         }

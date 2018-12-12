@@ -10,7 +10,7 @@ export interface ITopBarProps extends AppBarProps {
     onIconClick?: React.MouseEventHandler<any>;
 }
 
-export const TopBar: React.SFC<ITopBarProps> = ({ position = 'static', color = 'default', icon, title, children,onIconClick, ...other }: ITopBarProps) => {
+export const TopBar: React.SFC<ITopBarProps> = ({ position = 'static', color = 'default', icon, title, children, onIconClick, ...other }: ITopBarProps) => {
     const styles = {
         grow: {
             flexGrow: 1,
