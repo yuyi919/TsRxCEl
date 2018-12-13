@@ -1,4 +1,4 @@
-import * as iconv from 'iconv-lite';
+import { decode as IcovDecode } from 'iconv-lite';
 import { action, observable } from 'mobx';
 import { openTxtFile } from 'src/shared/clientApi';
 import * as Compose from 'src/shared/components/Compose';
@@ -62,7 +62,7 @@ export class MainFrameStore {
 
     @action public openHandler = () => {
         openTxtFile().subscribe(text => {
-            text = iconv.decode(new Buffer(text), 'gbk')
+            text = IcovDecode(new Buffer(text), 'gbk')
             const dom = document.createElement("html");
             dom.innerHTML = text
             const rootTitle = dom.querySelectorAll(this.listTag[0])

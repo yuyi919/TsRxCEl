@@ -1,7 +1,7 @@
 import { FileFilter } from 'electron';
 import { Observable } from 'rxjs';
 import { FileDialog } from '../dialog';
-import { channel, IpcListener } from './index';
+import { channel, IpcListener } from "./IpcListener";
 export interface IResponse {
     text: string;
 }

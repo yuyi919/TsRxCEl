@@ -1,5 +1,5 @@
 import { BrowserWindow } from 'electron';
-import { channel, IpcListener } from './index';
+import { channel, IpcListener } from "./IpcListener";
 
 @IpcListener
 export class WindowChannel {

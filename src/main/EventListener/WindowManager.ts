@@ -1,7 +1,7 @@
 import { app, BrowserWindow } from 'electron';
 import { MainWindow } from '../MainWindow';
 import { FileChannel } from './FileChannel';
-import { channel, IpcListener } from './index';
+import { channel, IpcListener } from "./IpcListener";
 
 export type getAppPath = (win: BrowserWindow) => string;
 

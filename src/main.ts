@@ -2,6 +2,7 @@ import { app } from 'electron';
 // import { SuperAgent } from 'superagent';
 // import * as path from 'path';
 // import { WindowManager } from './main/index';
+import { WindowManager } from './main/index';
 // import { HttpClient } from './main/index';
 
 const serve: boolean = process.env.NODE_ENV === 'development';
@@ -18,13 +19,13 @@ if (process.env.NODE_ENV === 'development') {
     require('module').globalPaths.push(p); // eslint-disable-line
 }
 
-const MainLibrary = require('../build/main/index');
 
+// const MainLibrary = require('../build/main/index');
 try {
-    console.log(MainLibrary);
+    // console.log(MainLibrary);
     // const superAgent: SuperAgent<any> = require('superagent');
-    const windowManager = new MainLibrary.WindowManager(serve, ()=>{
-        if(serve){
+    const windowManager = new WindowManager(serve, () => {
+        if (serve) {
             const path = require('path'); // eslint-disable-line
             require('electron-reload')(__dirname, {
                 electron: require(path.join(__dirname, `../node_modules/electron`))
