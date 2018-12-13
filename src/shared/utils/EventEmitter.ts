@@ -1,6 +1,5 @@
 import { Observable, Observer, Subscription } from 'rxjs';
 import { share } from 'rxjs/operators';
-export { Observable, Observer, Subscription };
 
 export type NextEvent<T> = (value: T) => void;
 export type ErrorEvent<T> = (error: any) => void;

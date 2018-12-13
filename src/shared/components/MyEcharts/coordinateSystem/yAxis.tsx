@@ -67,7 +67,7 @@ export class YAxis extends React.Component<IYAxisProps, any> {
         return null;
     }
 }
-export const defaultOption: IYAxisOption = {
+const defaultOption: IYAxisOption = {
     type: 'value',
     splitLine: {
         show: true

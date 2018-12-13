@@ -1,7 +1,6 @@
 import { Component } from 'react';
-import { merge, of } from 'rxjs';
+import { merge, Observable, of } from 'rxjs';
 import { filter, map, share, takeUntil } from 'rxjs/operators';
-import { Observable } from '..';
 import { EventEmitter } from '../EventEmitter';
 import { RxcEventType } from './interface';
 import { RxcInnerComponentProps } from './RxcInnerComponentProps';

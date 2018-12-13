@@ -1,3 +1,3 @@
-export { XAxis, IXAxisProps, IXAxisOption } from './xAxis';
-export { YAxis, IYAxisProps, IYAxisOption } from './yAxis';
+export * from './xAxis';
+export * from './yAxis';
 export * from './interface';

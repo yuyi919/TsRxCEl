@@ -67,7 +67,7 @@ export class XAxis extends React.Component<IXAxisProps, any> {
         return null;
     }
 }
-export const defaultOption: IXAxisOption = {
+const defaultOption: IXAxisOption = {
     type: 'category',
     data: null,
     nameTextStyle: {
