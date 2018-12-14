@@ -9,6 +9,7 @@
   },
   "homepage": "./",
   "description": "any",
+  "sideEffects": false,
   "scripts": {
     "hot-server": "cross-env NODE_ENV=development node --max_old_space_size=2096 scripts/start-electron.js",
     "start-hot": "cross-env HOT=1 NODE_ENV=development electron .",

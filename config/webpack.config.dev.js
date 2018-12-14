@@ -38,6 +38,8 @@ const env = getClientEnvironment(publicUrl);
 // The production configuration is different and lives in a separate file.
 module.exports = {
   mode: "development",
+  
+  target: 'electron-renderer',
   // You may want 'eval' instead if you prefer to see the compiled output in DevTools.
   // See the discussion in https://github.com/facebookincubator/create-react-app/issues/343.
   devtool: 'cheap-module-source-map',
@@ -141,7 +143,7 @@ module.exports = {
       manifest: manifest
     }),
     // 在htmlwebpack后插入一个AddAssetHtmlPlugin插件，用于将vendor插入打包后的页面
-    new AddAssetHtmlPlugin({ filepath: require.resolve('../devlib/lib.dll.js'), includeSourcemap: false }),
+    new AddAssetHtmlPlugin({ filepath: path.join(__dirname, '../devlib/lib.dll.js'), includeSourcemap: false }),
     // Makes some environment variables available in index.html.
     // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
     // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">

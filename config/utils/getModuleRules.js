@@ -136,7 +136,7 @@ const getModuleRules = ({ shouldUseSourceMap = false, shouldUseRelativeAssetPath
                 // disable type checker - we will use it in fork plugin
                 transpileOnly: true,
                 reportFiles:true,
-                configFile: paths.appTsMainConfig,
+                configFile: paths.appTsConfig,
                 resolveModuleName: true,
                 // compilerOptions: {
                 //   declaration: true,

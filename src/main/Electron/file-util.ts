@@ -1,5 +1,5 @@
 //  { ReadLine } from 'readline'; 
-import * as fs from 'fs';
+import { close as fsClose, open as fsOpen, read as fsRead, readdir as fsReaddir, readFile as fsReadFile, writeFile as fsWriteFile } from 'fs';
 import { decode as IcovDecode } from 'iconv-lite';
 import { Observable, Observer } from "rxjs";
 import { map } from "rxjs/operators";
@@ -16,13 +16,13 @@ export class FileUtil {
         let read: string = '';
         console.log("准备打开已存在的文件！");
         return new Promise((resolve, reject) => {
-            fs.open(this.path, 'r', (openError: NodeJS.ErrnoException, fd: number) => {
+            fsOpen(this.path, 'r', (openError: NodeJS.ErrnoException, fd: number) => {
                 if (openError) {
                     reject(openError);
                 }
                 console.log("文件打开成功！");
                 console.log("准备读取文件：");
-                fs.read(fd, buf, 0, buf.length, 0, (readError, bytes) => {
+                fsRead(fd, buf, 0, buf.length, 0, (readError: any, bytes:any) => {
                     if (readError) {
                         reject(readError);
                     }
@@ -33,7 +33,7 @@ export class FileUtil {
                         read = buf.slice(0, bytes).toString('utf8');
                     }
                     // 关闭文件
-                    fs.close(fd, closeError => {
+                    fsClose(fd, (closeError: any) => {
                         if (closeError) {
                             reject(closeError);
                         }
@@ -46,7 +46,7 @@ export class FileUtil {
     }
     public getDirFiles() {
         return new Observable<string>((observer: Observer<string>) => {
-            fs.readdir(this.path, 'utf8', (err: NodeJS.ErrnoException, files: string[]) => {
+            fsReaddir(this.path, 'utf8', (err: NodeJS.ErrnoException, files: string[]) => {
                 if (err) {
                     observer.error(err);
                 } else {
@@ -58,7 +58,7 @@ export class FileUtil {
     }
     public readFiles(endocingName = 'utf8'): Observable<string> {
         return new Observable<string>((observer: Observer<string>) => {
-            fs.readFile(this.path, "binary", function (err: NodeJS.ErrnoException, text: string) {
+            fsReadFile(this.path, "binary", function (err: NodeJS.ErrnoException, text: string) {
                 if (err) {
                     observer.error(err);
                 } else {
@@ -73,7 +73,7 @@ export class FileUtil {
     }
     public writeTextFile(text: string) {
         return new Promise<boolean>((resolve, reject) => {
-            fs.writeFile(this.path, text, (err) => {
+            fsWriteFile(this.path, text, (err) => {
                 if (err) {
                     reject(err);
                     resolve(false);

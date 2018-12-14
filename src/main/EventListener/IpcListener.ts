@@ -1,7 +1,7 @@
 import { IpcMessageEvent } from 'electron';
 import 'reflect-metadata';
 import { Observable } from 'rxjs';
-import '../../../global';
+import '../../global';
 import { IpcEventListener, IpcMessageResponse } from "./IpcEventListener";
 
 export interface IEventListenClass<T extends object> extends Type.ClassConstructor {

@@ -2,7 +2,6 @@ import Button from "@material-ui/core/Button";
 import * as React from "react";
 import { interval } from "rxjs";
 import { map } from "rxjs/operators";
-import { FileDialog } from 'src/main/dialog';
 import { ClientEventEmitter } from 'src/shared/clientApi';
 import { LiteButton } from 'src/shared/components/Lite';
 import { EventEmitter } from 'src/shared/utils';
@@ -26,7 +25,6 @@ const store = new Store();
 @Test()
 class AppHomePage extends React.Component {
   public $show = interval(100000).pipe(map(num=>num%2!=0));
-  public file: FileDialog = new FileDialog(true);
   public emit: ClientEventEmitter<any, any> = new ClientEventEmitter<any, any>('go');
   @Rx.create<number>((input: number) => {
     console.log(input)

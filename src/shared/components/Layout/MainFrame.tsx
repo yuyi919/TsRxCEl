@@ -1,6 +1,6 @@
 import { Provider } from 'mobx-react';
 import * as React from 'react';
-import { FileDialog } from 'src/main/dialog';
+import { FileDialog } from 'src/main/Electron/dialog';
 import { openAulFile, windowReCreate, windowReload } from 'src/shared/clientApi';
 import * as Lite from 'src/shared/components/Lite';
 import { AppChildContainer, AppStores } from 'src/shared/stores';

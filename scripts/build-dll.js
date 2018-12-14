@@ -17,7 +17,7 @@ const AssetsPlugin = require('assets-webpack-plugin');
 // })
  
 module.exports = {
-    mode: 'production',
+    mode: 'development',
     target: 'web',
     output: {
         path: paths.devlib,

@@ -1,9 +1,12 @@
+export * from './Channels';
+export * from './Electron';
+export * from './EventListener';
+export * from './MainWindow';
+export * from './WindowManager';
+// // export * from './menu';
 
-// import { SuperAgent } from 'superagent';
-// import * as path from 'path';
-// import { WindowManager } from './main/index';
-// import * as MainLibrary from './main/index';
-import * as MainLibrary from './MainLibrary';
-// import { HttpClient } from './main/index';
+// import { WindowManager } from './EventListener';
 
-export default MainLibrary;
+// export default {
+//     WindowManager
+// }

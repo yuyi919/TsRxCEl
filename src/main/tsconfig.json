@@ -5,13 +5,10 @@
     "target": "es2018",
     "sourceMap": false,
     "declaration": true,
-    "outDir": "../../build/main/",
-    "declarationDir": "../../build/main/",
+    "outDir": "../../devlib/main/",
+    "declarationDir": "../../devlib/main/",
     // "noEmit": true,
     "removeComments": true,
     "listEmittedFiles": true
-  },
-  "exclude": [
-    "src/main/MainLibrary"
-  ]
+  }
 }
