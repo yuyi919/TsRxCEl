@@ -1,10 +1,9 @@
-import { Dialog, FileFilter, OpenDialogOptions, Shell } from 'electron';
+import { Dialog, FileFilter, OpenDialogOptions, remote, shell } from 'electron';
 import { Observable, Observer, of } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { FileUtil } from './file-util';
 
 
-declare const window: any;
 export type DialogProperties = 'openFile' | 'openDirectory' | 'multiSelections' | 'showHiddenFiles' | 'createDirectory' | 'promptToCreate' | 'noResolveAliases' | 'treatPackageAsDirectory';
 
 /**
@@ -20,10 +19,8 @@ export class FileDialog {
      * @param isRemote 
      */
     constructor(isRemote?: boolean) {
-        if(isRemote){
-            const remote = window.require('electron').remote;
+        if(isRemote && window){
             this.dialog = remote.dialog;
-            return;
         } else {
             const { dialog } = require('electron');
             this.dialog = dialog;
@@ -98,7 +95,6 @@ export class FileDialog {
      * @param path 
      */
     public openFileByPath(path: string){
-        const shell: Shell = window.require("electron").shell;
         try{
             shell.openItem(path);
         } catch(e) {

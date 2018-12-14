@@ -1,22 +1,25 @@
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import { observer } from 'mobx-react';
 import * as React from 'react';
-import { ICON } from 'src/shared/components/Lite';
+import { getIcon, ICON } from 'src/shared/components/Lite';
 import { IOItemProps } from './interface';
 
 export const ItemIcon = ({ icon, ...other }: IOItemIconProps) => {
-    // console.log("icon update")
-    if (icon && ICON[icon]) {
-        const Icon = ICON[icon];
-        return <ListItemIcon {...other}><Icon /></ListItemIcon>;
-    }
-    else {
+    if(!icon){
         return null;
+    } else {
+        // console.log("icon update")
+        const iconWarp = getIcon(icon);
+        if (iconWarp) {
+            const Icon = getIcon(icon);
+            return <ListItemIcon {...other}><Icon /></ListItemIcon>;
+        }
     }
+    return null;
 };
 
 export interface IOItemIconProps {
-    icon?: any;
+    icon?: string;
 }
 
 export const OItemIcon = observer(({ item }: IOItemProps) => {

@@ -24,5 +24,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # tsc auto
-**.js
 src/**/*.js
+devlib
+lib_manifest.json

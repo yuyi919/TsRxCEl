@@ -1,9 +1,8 @@
 import { app, BrowserWindow } from 'electron';
-import { MainWindow } from '../MainWindow';
-import { FileChannel } from './FileChannel';
-import { channel, IpcListener } from "./IpcListener";
+import { FileChannel } from './Channels/FileChannel';
+import { channel, IpcListener } from "./EventListener";
+import { getAppPath, MainWindow } from './MainWindow';
 
-export type getAppPath = (win: BrowserWindow) => string;
 
 @IpcListener
 export class WindowManager {

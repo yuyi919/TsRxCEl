@@ -2,10 +2,10 @@ import { BrowserWindow, screen, Size } from 'electron';
 // import { Menu } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import { getAppPath } from './EventListener';
-import { WindowChannel } from './EventListener/WindowChannel';
+import { WindowChannel } from './Channels/WindowChannel';
 // import { execFile } from 'child_process';
 // import { main as mainMenu } from './menu';
+export type getAppPath = (win: BrowserWindow) => string;
 
 const getCenterWindow = (screensize: Size, windowSize: Size) => {
     return {
