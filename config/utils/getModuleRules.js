@@ -8,56 +8,65 @@ const cssModuleRegex = /\.module\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
 
-const getModuleRules = ({ shouldUseSourceMap = false, shouldUseRelativeAssetPaths = false}, isProd ) => {
-  
-  const loadKey = isProd? 'loader':'use';
+const getModuleRules = ({
+  shouldUseSourceMap = false,
+  shouldUseRelativeAssetPaths = false
+}, isProd) => {
+
+  const loadKey = isProd ? 'loader' : 'use';
 
   const getStyleLoaders = (cssOptions, preProcessor) => {
     const loaders = [
-        isProd ? ({
-          loader: MiniCssExtractPlugin.loader,
-          options: Object.assign({}, shouldUseRelativeAssetPaths ? { publicPath: '../../' } : undefined),
-        }) : require.resolve('style-loader') ,
-        {
-          loader: require.resolve('css-loader'),
-          options: cssOptions,
+      isProd ? ({
+        loader: MiniCssExtractPlugin.loader,
+        options: Object.assign({}, shouldUseRelativeAssetPaths ? {
+          publicPath: '../../'
+        } : undefined),
+      }) : require.resolve('style-loader'),
+      {
+        loader: require.resolve('css-loader'),
+        options: cssOptions,
+      },
+      {
+        // Options for PostCSS as we reference these options twice
+        // Adds vendor prefixing based on your specified browser support in
+        // package.json
+        loader: require.resolve('postcss-loader'),
+        options: {
+          // Necessary for external CSS imports to work
+          // https://github.com/facebook/create-react-app/issues/2677
+          ident: 'postcss',
+          plugins: () => [
+            require('postcss-flexbugs-fixes'),
+            require('postcss-preset-env')({
+              autoprefixer: {
+                flexbox: 'no-2009',
+              },
+              stage: 3,
+            }),
+          ],
+          sourceMap: shouldUseSourceMap,
         },
-        {
-          // Options for PostCSS as we reference these options twice
-          // Adds vendor prefixing based on your specified browser support in
-          // package.json
-          loader: require.resolve('postcss-loader'),
-          options: {
-            // Necessary for external CSS imports to work
-            // https://github.com/facebook/create-react-app/issues/2677
-            ident: 'postcss',
-            plugins: () => [
-              require('postcss-flexbugs-fixes'),
-              require('postcss-preset-env')({
-                autoprefixer: {
-                  flexbox: 'no-2009',
-                },
-                stage: 3,
-              }),
-            ],
-            sourceMap: shouldUseSourceMap,
-          },
-        },
+      },
     ];
     if (preProcessor) {
-      loaders.push(isProd?({
+      loaders.push(isProd ? ({
         loader: require.resolve(preProcessor),
         options: {
           sourceMap: shouldUseSourceMap,
         },
-      }): require.resolve(preProcessor) );
+      }) : require.resolve(preProcessor));
     }
     return loaders;
   };
 
   return ([
     // Disable require.ensure as it's not a standard language feature.
-    { parser: { requireEnsure: false } },
+    {
+      parser: {
+        requireEnsure: false
+      }
+    },
 
     // First, run the linter.
     // It's important to do this before Babel processes the JS.
@@ -67,15 +76,13 @@ const getModuleRules = ({ shouldUseSourceMap = false, shouldUseRelativeAssetPath
     {
       test: /\.(js|jsx|mjs)$/,
       enforce: 'pre',
-      use: [
-        {
-          options: {
-            formatter: require.resolve('react-dev-utils/eslintFormatter'),
-            eslintPath: require.resolve('eslint'),
-          },
-          loader: require.resolve('eslint-loader'),
+      use: [{
+        options: {
+          formatter: require.resolve('react-dev-utils/eslintFormatter'),
+          eslintPath: require.resolve('eslint'),
         },
-      ],
+        loader: require.resolve('eslint-loader'),
+      }, ],
       include: paths.appSrc,
     },
     {
@@ -100,7 +107,9 @@ const getModuleRules = ({ shouldUseSourceMap = false, shouldUseRelativeAssetPath
           options: Object.assign({
             customize: require.resolve('babel-preset-react-app/webpack-overrides'),
             "presets": [
-                ['es2015', {modules: false}]
+              ['es2015', {
+                modules: false
+              }]
             ],
             plugins: [
               [
@@ -115,36 +124,34 @@ const getModuleRules = ({ shouldUseSourceMap = false, shouldUseRelativeAssetPath
               ],
             ],
             cacheDirectory: true,
-          }, isProd?({
-              // Save disk space when time isn't as important
-              cacheCompression: true,
-              compact: true,
-              exclude: "/node_modules/",
-          }):({
-              // Don't waste time on Gzipping the cache
-              cacheCompression: false,
+          }, isProd ? ({
+            // Save disk space when time isn't as important
+            cacheCompression: true,
+            compact: true,
+            exclude: "/node_modules/",
+          }) : ({
+            // Don't waste time on Gzipping the cache
+            cacheCompression: false,
           })),
         },
         // Compile .tsx?
         {
           test: /\.(ts|tsx)$/,
           include: paths.appSrc,
-          [loadKey]: [
-            {
-              loader: require.resolve('ts-loader'),
-              options: {
-                // disable type checker - we will use it in fork plugin
-                transpileOnly: true,
-                reportFiles:true,
-                configFile: paths.appTsConfig,
-                resolveModuleName: true,
-                // compilerOptions: {
-                //   declaration: true,
-                //   declarationDir: ".",
-                // }
-              },
+          [loadKey]: [{
+            loader: require.resolve('ts-loader'),
+            options: {
+              // disable type checker - we will use it in fork plugin
+              transpileOnly: true,
+              // reportFiles:true,
+              configFile: isProd ? paths.appTsMainConfig : paths.appTsConfig,
+              // resolveModuleName: true,
+              // compilerOptions: {
+              //   declaration: true,
+              //   declarationDir: ".",
+              // }
             },
-          ],
+          }, ],
         },
         // "postcss" loader applies autoprefixer to our CSS.
         // "css" loader resolves paths in CSS and adds assets as dependencies.
@@ -156,7 +163,7 @@ const getModuleRules = ({ shouldUseSourceMap = false, shouldUseRelativeAssetPath
           exclude: cssModuleRegex,
           [loadKey]: getStyleLoaders({
             importLoaders: 1,
-            sourceMap: isProd?shouldUseSourceMap:undefined,
+            sourceMap: isProd ? shouldUseSourceMap : undefined,
           }),
           // Don't consider CSS imports dead code even if the
           // containing package claims to have no side effects.
@@ -170,7 +177,7 @@ const getModuleRules = ({ shouldUseSourceMap = false, shouldUseRelativeAssetPath
           test: cssModuleRegex,
           [loadKey]: getStyleLoaders({
             importLoaders: 1,
-            sourceMap: isProd?shouldUseSourceMap:undefined,
+            sourceMap: isProd ? shouldUseSourceMap : undefined,
             modules: true,
             getLocalIdent: getCSSModuleLocalIdent,
           }),
@@ -185,7 +192,7 @@ const getModuleRules = ({ shouldUseSourceMap = false, shouldUseRelativeAssetPath
           exclude: sassModuleRegex,
           [loadKey]: getStyleLoaders({
             importLoaders: 2,
-            sourceMap: isProd?shouldUseSourceMap:undefined,
+            sourceMap: isProd ? shouldUseSourceMap : undefined,
           }, 'sass-loader'),
           // Don't consider CSS imports dead code even if the
           // containing package claims to have no side effects.
@@ -199,7 +206,7 @@ const getModuleRules = ({ shouldUseSourceMap = false, shouldUseRelativeAssetPath
           test: sassModuleRegex,
           [loadKey]: getStyleLoaders({
             importLoaders: 2,
-            sourceMap: isProd?shouldUseSourceMap:undefined,
+            sourceMap: isProd ? shouldUseSourceMap : undefined,
             modules: true,
             getLocalIdent: getCSSModuleLocalIdent,
           }, 'sass-loader'),

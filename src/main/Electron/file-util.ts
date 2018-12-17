@@ -1,6 +1,6 @@
 //  { ReadLine } from 'readline'; 
 import { close as fsClose, open as fsOpen, read as fsRead, readdir as fsReaddir, readFile as fsReadFile, writeFile as fsWriteFile } from 'fs';
-import { decode as IcovDecode } from 'iconv-lite';
+import * as iconv from 'iconv-lite';
 import { Observable, Observer } from "rxjs";
 import { map } from "rxjs/operators";
 
@@ -67,7 +67,7 @@ export class FileUtil {
                 observer.complete();
             });
         }).pipe(
-            map((text:string) => IcovDecode(new Buffer(text), endocingName))
+            map((text:string) => iconv.decode(new Buffer(text), endocingName))
         )
             
     }

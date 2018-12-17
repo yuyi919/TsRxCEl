@@ -1,6 +1,5 @@
-
 import { app } from 'electron';
-import { WindowManager } from './main/index';
+import * as MainLibrary from './main/index';
 const serve: boolean = process.env.NODE_ENV === 'development';
 
 if (process.env.NODE_ENV === 'production') {
@@ -16,12 +15,13 @@ if (process.env.NODE_ENV === 'development') {
 }
 // declare let this: any;
 // console.log(this as any, typeof (this as any)!);
-// const MainLibrary = require('../build/main/index');
-
+// const MainLibrary: any = require('../build/main/index');
+// const MainLibrary = require('../devlib/main/src/main/index');
+// declare const MainLibrary: any;
 try {
-    // console.log(MainLibrary2, typeof MainLibrary2);
+    console.log(MainLibrary, typeof MainLibrary);
     // const superAgent: SuperAgent<any> = require('superagent');
-    const windowManager = new WindowManager(serve, () => {
+    const windowManager = new MainLibrary.WindowManager(app, serve, () => {
         if (serve) {
             const path = require('path'); // eslint-disable-line
             require('electron-reload')(__dirname, {
@@ -85,4 +85,8 @@ try {
     console.log(e.message);
     console.log(e);
     app.quit();
+}
+
+export default {
+    serve
 }

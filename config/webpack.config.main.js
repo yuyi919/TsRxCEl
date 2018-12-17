@@ -5,7 +5,6 @@ const webpack = require('webpack');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const PnpWebpackPlugin = require('pnp-webpack-plugin');
-// const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ManifestPlugin = require('webpack-manifest-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
@@ -73,8 +72,8 @@ const cssFileChunkname = 'css/app.[contenthash:12].css';
 // It compiles slowly and is focused on producing a fast and minimal bundle.
 // The development configuration is different and lives in a separate file.
 module.exports = {
-  // mode: 'production',
-  mode: 'development',
+  // mode: 'development',
+  mode: 'production',
   // Don't attempt to continue if there are any errors.
   target: 'electron-renderer',
   bail: true,
@@ -84,8 +83,8 @@ module.exports = {
   // In production, we only want to load the polyfills and the app code.
   // entry: [require.resolve('./polyfills'), paths.appMainTs],
   entry: {
-    index: [require.resolve('./polyfills'), paths.appIndexJs],
-    main: [require.resolve('./polyfills'), paths.appMainTs]
+    // main: [paths.appMainTs],
+    index: [require.resolve('./polyfills'), paths.appIndexJs]
   },
   output: {
     // The build folder.
@@ -101,19 +100,17 @@ module.exports = {
     //   path
     //     .relative(paths.appSrc, info.absoluteResourcePath)
     //     .replace(/\\/g, '/'),
-    library: 'MainLibrary',
+    // library: 'MainLibrary',
     libraryTarget: 'commonjs2',
     globalObject: 'this',
-    // libraryExport: 'default'
-    // umdNamedDefine: false
+    // libraryExport: paths.appMainTs,
+    // umdNamedDefine: true
   },
   optimization: getOptimizationConfig({
     shouldUseSourceMap
   }, true),
   // externals: {
-  //   [paths.appMainTs]: {
-      
-  //   }
+  //   "main": true
   // },
   resolve: {
     // This allows you to set a fallback for where Webpack should look for modules.
@@ -143,7 +140,6 @@ module.exports = {
       '.jsx',
     ],
     alias: {
-
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
@@ -172,11 +168,15 @@ module.exports = {
   },
   module: {
     strictExportPresence: true,
-    // unknownContextCritical : false,
-    rules: getModuleRules({
+    rules: [{
+      test: /node_modules[\/\\](iconv-lite)[\/\\].+/,
+      resolve: {
+        aliasFields: ['main']
+      }
+    }, ...getModuleRules({
       shouldUseSourceMap,
       shouldUseRelativeAssetPaths
-    }, true)
+    }, true)]
   },
   plugins: [
     // Generates an `index.html` file with the <script> injected.
@@ -196,19 +196,16 @@ module.exports = {
         minifyURLs: true,
       },
     }),
-    new webpack.DllReferencePlugin({
-      context: __dirname,
-      manifest: manifest
-    }),
+    // new webpack.DllReferencePlugin({
+    //   context: __dirname,
+    //   manifest: manifest
+    // }),
     // 在htmlwebpack后插入一个AddAssetHtmlPlugin插件，用于将vendor插入打包后的页面
-    new AddAssetHtmlPlugin({ 
-      filepath: require.resolve('../devlib/lib.dll.js'), 
-      includeSourcemap: false,
-    }),
+    // new AddAssetHtmlPlugin({ filepath: path.join(__dirname, '../devlib/lib.dll.js'), includeSourcemap: false }),
     // Inlines the webpack runtime script. This script is too small to warrant
     // a network request.
     // shouldInlineRuntimeChunk &&
-    new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/runtime~.+[.]js/]),
+    // new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/.+[.]js/]),
     // Makes some environment variables available in index.html.
     // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
     // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
@@ -281,10 +278,9 @@ module.exports = {
     // Perform type checking and linting in a separate process to speed up compilation
     new ForkTsCheckerWebpackPlugin({
       async: false,
-      tsconfig: paths.appTsMainConfig,
+      tsconfig: paths.appTsConfig,
       tslint: paths.appTsLint,
-    }),
-    new BundleAnalyzerPlugin()
+    })
   ],
   // // Some libraries import Node modules but don't use them in the browser.
   // // Tell Webpack to provide empty mocks for them so importing them works.
@@ -299,3 +295,7 @@ module.exports = {
   // our own hints via the FileSizeReporter
   performance: false,
 };
+
+if (process.env.ONLY == 'true') {
+  module.exports.plugins.push(new BundleAnalyzerPlugin());
+}

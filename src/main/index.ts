@@ -5,8 +5,6 @@ export * from './MainWindow';
 export * from './WindowManager';
 // // export * from './menu';
 
-// import { WindowManager } from './EventListener';
+import { WindowManager } from './WindowManager';
 
-// export default {
-//     WindowManager
-// }
+export default WindowManager;

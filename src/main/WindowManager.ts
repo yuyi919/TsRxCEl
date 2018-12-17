@@ -1,7 +1,8 @@
-import { app, BrowserWindow } from 'electron';
+import { App, BrowserWindow } from 'electron';
 import { FileChannel } from './Channels/FileChannel';
 import { channel, IpcListener } from "./EventListener";
-import { getAppPath, MainWindow } from './MainWindow';
+import { getAppPath } from './interface';
+import { MainWindow } from './MainWindow';
 
 
 @IpcListener
@@ -10,9 +11,11 @@ export class WindowManager {
     private win: BrowserWindow | null | undefined = null;
     private serve: boolean;
     private channels: FileChannel;
+    private app: App;
     private callback: getAppPath | undefined;
 
-    constructor(serve: boolean, callback?: getAppPath) {
+    constructor(app: App, serve: boolean, callback?: getAppPath) {
+        this.app=app;
         this.serve = serve;
         this.windowCreate();
         this.callback = callback;
@@ -34,7 +37,7 @@ export class WindowManager {
         // This method will be called when Electron has finished
         // initialization and is ready to create browser windows.
         // Some APIs can only be used after this event occurs.
-        app.on('ready', () => {
+        this.app.on('ready', () => {
             if (this.win === null) {
                 console.log("Dev Server Starting");
                 this.win = this.mainWindow.create(this.callback);
@@ -44,16 +47,16 @@ export class WindowManager {
         });
 
         // Quit when all windows are closed.
-        app.on('window-all-closed', () => {
+        this.app.on('window-all-closed', () => {
             // On OS X it is common for applications and their menu bar
             // to stay active until the user quits explicitly with Cmd + Q
             // if (process.platform !== 'darwin') {
             //     app.quit();
             // }
-            app.quit();
+            this.app.quit();
         });
 
-        app.on('activate', () => {
+        this.app.on('activate', () => {
             // On OS X it's common to re-create a window in the app when the
             // dock icon is clicked and there are no other windows open.
             if (this.win === null) {

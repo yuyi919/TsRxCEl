@@ -17,7 +17,7 @@ const AssetsPlugin = require('assets-webpack-plugin');
 // })
  
 module.exports = {
-    mode: 'development',
+    mode: process.env.DEV=="true"?'development':'production',
     target: 'web',
     output: {
         path: paths.devlib,
@@ -40,3 +40,7 @@ module.exports = {
         })
     ],
 };
+
+if(process.env.ONLY == 'true'){
+    module.exports.plugins.push(new BundleAnalyzerPlugin());
+}

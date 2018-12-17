@@ -1,0 +1,20 @@
+{
+    "restartable": "rs",
+    "ignore": [
+        ".git", "node_modules/**/node_modules", "tsconfig.json", "util", "build"
+    ],
+    "verbose": true,
+    "ext": "ts",
+    "execMap": {
+        "": "node",
+        "js": "node --harmony"
+    },
+    "watch": [
+        "src/main/",
+        "src/main.ts"
+    ],
+    "env": {
+        "NODE_ENV": "development"
+    },
+    "原文": "https://blog.csdn.net/wangrong111222/article/details/81395246"
+}
