@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { interval } from 'rxjs';
+import logo from 'src/resource/logo.svg';
 import './App.css';
-import logo from './logo.svg';
 
 
 class App extends React.Component {

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
-import App from './App';
+// import { it } from "ts-jest";
+import Index from './RootRoutes';
 
 declare const it: any;
-
 it('renders without crashing', () => {
   const div = document.createElement('div');
-  render(<App />, div);
+  render(<Index />, div);
   unmountComponentAtNode(div);
 });

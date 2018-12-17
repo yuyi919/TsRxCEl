@@ -8,8 +8,8 @@ import { HashRouter } from "react-router-dom";
 // import { AppHomePage } from "./components/AppHomePage";
 // import { CounterPage } from "./components/CounterPage";
 // import { EchartsTestPage } from './components/EchartTestPage';
-import IndexPage from './components/IndexPage';
-import { AppStore } from "./shared";
+import IndexPage from 'src/components/IndexPage';
+import { AppStore } from "src/shared";
 // import { LiteButton } from './shared/components/Lite';
 
 const appStore = new AppStore();

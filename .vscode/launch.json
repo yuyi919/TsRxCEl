@@ -1,0 +1,46 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Electron Main",
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+            "program": "${workspaceFolder}/main.js"
+        },
+        {
+            "name": "Electron",
+            "type": "node",
+            "request": "launch",
+            "args": [
+                "${workspaceRoot}\\scripts\\start-electron.js", // 入口文件
+                "${workspaceRoot}\\src\\main.ts"
+            ],
+            "runtimeArgs": [
+                "--nolazy",
+                "-r",
+                "ts-node/register",
+                "--max_old_space_size=2096"
+            ],
+            "sourceMaps": true,
+            "cwd": "${workspaceRoot}",
+            "protocol": "inspector",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "preLaunchTask": "development"
+        },
+        {
+            "name": "Current TS File",
+            "type": "node",
+            "request": "launch",
+            "args": [
+              "${relativeFile}"
+            ],
+            "runtimeArgs": ["-r", "ts-node/register"],
+            "internalConsoleOptions": "neverOpen",
+            "cwd": "${workspaceRoot}",
+            "protocol": "inspector",
+            "sourceMaps": true
+          }
+    ]
+}

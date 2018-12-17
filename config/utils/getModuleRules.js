@@ -106,7 +106,7 @@ const getModuleRules = ({
           loader: require.resolve('babel-loader'),
           options: Object.assign({
             customize: require.resolve('babel-preset-react-app/webpack-overrides'),
-            "presets": [
+            presets: [
               ['es2015', {
                 modules: false
               }]
@@ -141,6 +141,9 @@ const getModuleRules = ({
           [loadKey]: [{
             loader: require.resolve('ts-loader'),
             options: {
+              customize: require.resolve(
+                'babel-preset-react-app/webpack-overrides'
+              ),
               // disable type checker - we will use it in fork plugin
               transpileOnly: true,
               // reportFiles:true,

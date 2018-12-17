@@ -1,0 +1,33 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "调试",
+            "type": "npm",
+            "script": "dev",
+            "problemMatcher": []
+        },
+        {
+            "type": "typescript",
+            "tsconfig": "TsRxCEl2\\tsconfig.json",
+            "option": "watch",
+            "problemMatcher": [
+                "$tsc-watch"
+            ]
+        },
+        {
+            "label": "构建win32",
+            "type": "npm",
+            "script": "build:win",
+            "problemMatcher": []
+        },
+        {
+            "label": "development",
+            "type": "npm",
+            "script": "development",
+            "problemMatcher": []
+        }
+    ]
+}

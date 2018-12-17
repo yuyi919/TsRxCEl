@@ -2,7 +2,7 @@
   "name": "tsrxcel",
   "version": "1.0.0",
   "private": true,
-  "main": "build/main.js",
+  "main": "main.ts",
   "author": {
     "name": "yuyi",
     "email": "yuyi919606952@foxmail.com"
@@ -11,6 +11,7 @@
   "description": "any",
   "sideEffects": false,
   "scripts": {
+    "development": "cross-env NODE_ENV=development",
     "hot-server": "cross-env NODE_ENV=development node --max_old_space_size=2096 scripts/start-electron.js",
     "start-hot": "cross-env HOT=1 NODE_ENV=development electron .",
     "electron:tsc": "tsc -target es5 -removeComments true -lib dom,DOM.Iterable,es2015 -moduleResolution node -outDir build -rootDir src -baseUrl . -sourceMap -allowJs -emitDecoratorMetadata true -experimentalDecorators true -allowUnreachableCode src/main.ts",
@@ -30,7 +31,8 @@
     "build:mainTS": "tsc --project src/main/tsconfig.main.json ",
     "build:win": "npm run build:main && npm run electron:windows && npm run asar",
     "build:win2": "npm run build:dll && npm run build:main && npm run electron:windows",
-    "test": "node scripts/test.js --env=jsdom",
+    "test": "node scripts/test.js",
+    "test-debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "asar": "asar extract dist/win-unpacked/resources/app.asar dist/app"
   },
   "build": {
@@ -115,9 +117,10 @@
     "ajv": "^6.6.1",
     "assets-webpack-plugin": "^3.9.7",
     "autoprefixer": "7.1.6",
-    "babel-jest": "^22.1.0",
+    "babel-jest": "^23.6.0",
     "babel-loader": "^7.1.5",
     "babel-plugin-named-asset-import": "^0.2.3",
+    "babel-preset-react": "^6.24.1",
     "babel-preset-react-app": "^6.1.0",
     "case-sensitive-paths-webpack-plugin": "2.1.1",
     "chalk": "1.1.3",
@@ -142,6 +145,8 @@
     "html-webpack-plugin": "^4.0.0-beta.4",
     "iconv-lite": "^0.4.24",
     "jest": "22.4.2",
+    "jest-pnp-resolver": "^1.0.2",
+    "jest-resolve": "^23.6.0",
     "mini-css-extract-plugin": "^0.5.0",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "pnp-webpack-plugin": "^1.2.1",
@@ -151,6 +156,7 @@
     "postcss-safe-parser": "^4.0.1",
     "raf": "3.4.0",
     "react": "^16.6.3",
+    "react-app-polyfill": "^0.1.3",
     "react-dev-utils": "^6.1.1",
     "react-dom": "^16.6.3",
     "reflect": "^0.1.3",
@@ -163,6 +169,7 @@
     "terser-webpack-plugin": "^1.1.0",
     "ts-jest": "^23.10.5",
     "ts-loader": "^5.3.1",
+    "ts-node": "^7.0.1",
     "tsconfig-paths-webpack-plugin": "^3.2.0",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.17.0",
@@ -179,28 +186,32 @@
   },
   "jest": {
     "collectCoverageFrom": [
-      "src/**/*.{js,jsx,ts,tsx}"
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!src/**/*.d.ts"
     ],
+    "resolver": "jest-pnp-resolver",
     "setupFiles": [
-      "<rootDir>/config/polyfills.js"
+      "react-app-polyfill/jsdom"
     ],
     "testMatch": [
-      "<rootDir>/src/**/__tests__/**/*.(j|t)s?(x)",
-      "<rootDir>/src/**/?(*.)(spec|test).(j|t)s?(x)"
+      "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
+      "<rootDir>/src/**/?(*.)(spec|test).{js,jsx,ts,tsx}"
     ],
-    "testEnvironment": "node",
+    "testEnvironment": "jsdom",
     "testURL": "http://localhost",
     "transform": {
-      "^.+\\.(js|jsx|mjs)$": "<rootDir>/node_modules/babel-jest",
-      "^.+\\.tsx?$": "<rootDir>/config/jest/typescriptTransform.js",
+      "^.+\\.(ts|tsx)?$": "<rootDir>/node_modules/ts-jest",
+      "^.+\\.(js|jsx)?$": "<rootDir>/node_modules/babel-jest",
       "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
-      "^(?!.*\\.(js|jsx|mjs|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
+      "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
     },
     "transformIgnorePatterns": [
-      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|ts|tsx)$"
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$",
+      "^.+\\.module\\.(css|sass|scss)$"
     ],
     "moduleNameMapper": {
-      "^react-native$": "react-native-web"
+      "^react-native$": "react-native-web",
+      "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
     },
     "moduleFileExtensions": [
       "web.ts",
@@ -217,7 +228,7 @@
     ],
     "globals": {
       "ts-jest": {
-        "tsConfigFile": "D:\\WorkSpace\\TsRxCEl\\tsconfig.test.json"
+        "tsConfig": "tsconfig.test.json"
       }
     }
   },
