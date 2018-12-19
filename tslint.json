@@ -4,7 +4,9 @@
     "exclude": [
       "config/**/*.js",
       "node_modules/**/*.ts",
-      "dist/**/*.*"
+      "dist/**/*.*",
+      "src/global/**/*.*",
+      "src/**/*.d.ts"
     ]
   },
   "rules": {

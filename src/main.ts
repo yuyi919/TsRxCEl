@@ -1,6 +1,8 @@
 import { app } from 'electron';
+import './global';
 import * as MainLibrary from './main/index';
 const serve: boolean = process.env.NODE_ENV === 'development';
+
 
 if (process.env.NODE_ENV === 'production') {
     const sourceMapSupport = require('source-map-support'); // eslint-disable-line
@@ -14,12 +16,12 @@ if (process.env.NODE_ENV === 'development') {
     require('module').globalPaths.push(p); // eslint-disable-line
 }
 // declare let this: any;
-// console.log(this as any, typeof (this as any)!);
+// logger.log(this as any, typeof (this as any)!);
 // const MainLibrary: any = require('../build/main/index');
 // const MainLibrary = require('../devlib/main/src/main/index');
 // declare const MainLibrary: any;
 try {
-    console.log(MainLibrary, typeof MainLibrary);
+    logger.log(MainLibrary, typeof MainLibrary);
     // const superAgent: SuperAgent<any> = require('superagent');
     const windowManager = new MainLibrary.WindowManager(app, serve, () => {
         if (serve) {
@@ -27,22 +29,21 @@ try {
             require('electron-reload')(__dirname, {
                 electron: require(path.join(__dirname, `../node_modules/electron`))
             });
-            console.log("dev reload");
+            logger.log("dev reload");
             return 'http://localhost:3000/';
-
         } else {
             const path = require('path'); // eslint-disable-line
-            console.log(path.join(__dirname, './index.html'))
+            logger.log(path.join(__dirname, './index.html'))
             return __dirname;
         }
     });
-    console.log(windowManager);
+    logger.log(windowManager);
     windowManager.process();
     // let http: HttpClient;
     // ipcMain.on('http-get', (event: IpcMessageEvent, url: string, param?: object, ...args: any[]) => {
     //     superAgent.get(encodeURI(url)).end((err: any, res: any) => {
     //         if (err) {
-    //             console.log(err);
+    //             logger.log(err);
     //         }
     //         event.sender.send('http-get', res.text);
     //     });
@@ -54,7 +55,7 @@ try {
     //         if (!http) {
     //             http = new HttpClient('localhost', 8080);
     //         }
-    //         console.log(url, param);
+    //         logger.log(url, param);
     //         http.get(url, param || {}).then(response => {
     //             event.sender.send(response)
     //         }).catch(e => {
@@ -69,7 +70,7 @@ try {
     //         if (!http) {
     //             http = new HttpClient('localhost', 8080);
     //         }
-    //         console.log(url, param);
+    //         logger.log(url, param);
     //         http.post(url, param || {}).then(response => {
     //             event.sender.send(response);
     //         }).catch(e => event.sender.send(e));
@@ -82,8 +83,7 @@ try {
     // Catch Error
     // throw e;
 
-    console.log(e.message);
-    console.log(e);
+    logger.fatal(e);
     app.quit();
 }
 

@@ -21,6 +21,6 @@ export class WindowChannel {
     }
 
     public onDestroy(): void {
-        console.log('disposed');
+        logger.log('disposed');
     }
 }

@@ -5,9 +5,7 @@ import { getIcon, ICON } from 'src/shared/components/Lite';
 import { IOItemProps } from './interface';
 
 export const ItemIcon = ({ icon, ...other }: IOItemIconProps) => {
-    if(!icon){
-        return null;
-    } else {
+    if(icon){
         // console.log("icon update")
         const iconWarp = getIcon(icon);
         if (iconWarp) {

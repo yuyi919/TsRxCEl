@@ -84,10 +84,10 @@ module.exports = {
         ],
     },
     plugins: [
-        new ClearWebpackPlugin([paths.appBuildMain], {
-            root: paths.appBuild,
-            verbose: true
-        }),
+        // new ClearWebpackPlugin([paths.appBuildMain], {
+        //     root: paths.appBuild,
+        //     verbose: true
+        // }),
         // new webpack.DllReferencePlugin({
         //     context: __dirname,
         //     manifest: manifest

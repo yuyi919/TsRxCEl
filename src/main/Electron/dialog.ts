@@ -112,7 +112,7 @@ export class FileDialog {
             this.dialog.showOpenDialog(this.getOptions(title), (filePath: string[]) => {
                 if(filePath && filePath.length > 0){
                     for(const path of filePath){
-                        console.log(path);
+                        logger.log(path);
                         obser.next(path);
                     }
                 }

@@ -62,7 +62,7 @@ export class MainFrameStore {
 
     @action public openHandler = () => {
         openTxtFile().subscribe(text => {
-            text = IcovDecode(new Buffer(text), 'gbk')
+            text = IcovDecode(new Buffer(text,"binary"), 'gbk')
             const dom = document.createElement("html");
             dom.innerHTML = text
             const rootTitle = dom.querySelectorAll(this.listTag[0])

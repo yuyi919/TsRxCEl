@@ -15,23 +15,23 @@ export interface IOpenFile {
 export class FileChannel {
     @channel<IResponse, string>('go')
     public go1(response: IResponse) {
-        console.log('receive', response);
+        logger.log('receive', response);
         return 'failed!';
     }
 
     @channel<IOpenFile, Observable<string>>('load')
     public readFile({title,filter,encode}: IOpenFile) {
-        console.log('receive', title, filter, encode);
+        logger.log('receive', title, filter, encode);
         return new FileDialog().setFilters(filter).readFile(title || '打开', encode)
     }
 
     // @channel<IResponse, string>('go')
     // public go2(response: IResponse): string {
-    //     console.log('receive', response);
+    //     logger.log('receive', response);
     //     return 'success!';
     // }
 
     public onDestroy(): void {
-        console.log('disposed');
+        logger.log('disposed');
     }
 }

@@ -1,4 +1,4 @@
-import * as equal from 'fast-deep-equal';
+import equal from 'fast-deep-equal';
 import * as React from 'react';
 
 export interface IRxcForProps {
@@ -18,7 +18,7 @@ export class RxcFor extends React.Component<IRxcForProps> {
         } else if (!equal(nextList, list)) {
             return true;
         }
-        return equal(next, props);
+        return equal(next, props)!;
     }
     public render() {
         const { children, objArr = [{}], component, keyField } = this.props;

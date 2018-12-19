@@ -43,22 +43,22 @@ export const MainFrame: AppStores.OComponent = withStyle(
 const getPath = () => {
     const file: FileDialog = new FileDialog(true);
     file.openFile("a").subscribe((path: boolean) => {
-        console.log(path);
+        logger.log(path);
     })
 }
 
 const open = () => {
     openAulFile().subscribe(text => {
-        console.log(text);
+        logger.log(text);
     })
 }
 const recreate = () => {
     windowReCreate(true).subscribe((re: boolean) => {
-        console.log(re);
+        logger.log(re);
     })
 }
 const reload = () => {
     windowReload(true).subscribe((re: boolean) => {
-        console.log(re);
+        logger.log(re);
     })
 }

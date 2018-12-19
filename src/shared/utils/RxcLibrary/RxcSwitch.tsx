@@ -1,4 +1,4 @@
-import * as equal from 'fast-deep-equal';
+import equal from 'fast-deep-equal';
 import * as React from 'react';
 import { componentTypeEqual } from '../ComponentEqual';
 import { IRxcIfProps, RxcIf } from './RxcIf';

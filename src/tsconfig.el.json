@@ -1,0 +1,33 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "sourceMap": true,
+    // "noResolve": true,
+    "module": "commonjs",
+    "target": "es5",
+    "outDir": "../build",
+    "skipLibCheck": true,
+    "listEmittedFiles": true,
+    "removeComments": true,
+    "rootDir": "",
+    "allowUnusedLabels": true,
+    "paths": {
+      "src": ["."]
+    },
+    "typeRoots": [
+      "../node_modules/@types",
+      "./global"
+    ],
+  },
+  "files": [
+    "global/index.ts",
+    "main.ts",
+  ],
+  "include": [
+    "./global/*.ts",
+    "./global/*.d.ts"
+  ],
+  "exclude": [
+    "."
+  ]
+}

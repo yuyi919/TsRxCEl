@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { interval } from 'rxjs';
-import logo from 'src/resource/logo.svg';
+import logo from '../resource/logo.svg';
 import './App.css';
 
 
@@ -16,7 +16,7 @@ class App extends React.Component {
   public render() {
     console.log(this.state.num)
     return (
-      <div className="App">
+      <div className="App"> 
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo"/>
           <h1 className="App-title">Welcome to React + {this.state.num}</h1>

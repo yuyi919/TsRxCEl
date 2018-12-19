@@ -1,19 +1,21 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../tsconfig.el.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es5",
-    "sourceMap": true,
-    "declaration": true,
     "outDir": "../../devlib",
-    // "allowJs": true,
+    "declaration": true,
     "declarationDir": "../../devlib",
-    // "noEmit": true,
-    "removeComments": true,
-    "listEmittedFiles": true, 
-    "baseUrl": "/",
-    // "typeRoots": [
-    //     "../"
-    // ],
-  }
+    "rootDir": "",
+    "typeRoots": [
+      "node_modules/@types",
+      "../global"
+    ]
+  },
+  "files": [
+    "../global/index.ts",
+    "index.ts",
+  ],
+  "include": [
+    "../global/*.ts",
+    "../global/*.d.ts"
+  ],
 }

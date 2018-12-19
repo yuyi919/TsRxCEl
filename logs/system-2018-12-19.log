@@ -1,0 +1,46 @@
+[2018-12-19T15:51:18.547] [INFO] System - { FileChannel: [Function: FileChannel],
+  WindowChannel: [Function: WindowChannel],
+  FileDialog: [Function: FileDialog],
+  FileUtil: [Function: FileUtil],
+  HttpClient: [Function: HttpClient],
+  IpcListener: [Function: IpcListener],
+  channel: [Function: channel],
+  default: [Function: WindowManager],
+  IpcEventListener: [Function: IpcEventListener],
+  MainWindow: [Function: MainWindow],
+  WindowManager: [Function: WindowManager] } 'object'
+[2018-12-19T15:51:18.567] [INFO] System - WindowManager {
+  win: null,
+  app: 
+   App {
+     domain: null,
+     _events: 
+      { login: [Function],
+        'certificate-error': [Function],
+        'select-client-certificate': [Function],
+        quit: [Function],
+        'web-contents-created': [Function],
+        'session-created': [Function],
+        'will-quit': [Function],
+        ready: [Array],
+        'window-all-closed': [Function],
+        'browser-window-created': [Function] },
+     _eventsCount: 10,
+     _maxListeners: undefined,
+     setApplicationMenu: [Function: setApplicationMenu],
+     getApplicationMenu: [Function: getApplicationMenu],
+     commandLine: 
+      { appendSwitch: [Function: appendSwitch],
+        appendArgument: [Function: appendArgument] },
+     allowNTLMCredentialsForAllDomains: [Function] },
+  serve: true,
+  mainWindow: MainWindow { development: true },
+  callback: [Function],
+  channels: FileChannel {} }
+[2018-12-19T15:51:18.882] [INFO] System - #*******#WindowManager#*******#
+[2018-12-19T15:51:18.893] [INFO] System - [ 'Dev Server Starting' ]
+[2018-12-19T15:51:18.893] [INFO] System - #*******#WindowManager#*******#
+[2018-12-19T15:51:18.913] [INFO] System - **********开发模式************** true
+[2018-12-19T15:51:20.063] [INFO] System - dev reload
+[2018-12-19T15:51:50.757] [INFO] System - Completed
+[2018-12-19T15:51:56.349] [INFO] System - System Quit

@@ -27,7 +27,7 @@ export function action<T = any>(actionName?: string) {
         descriptor.value = function (...args: any[]) {
             if (target.isPrototypeOf(this)) {
                 if (!this.hasOwnProperty('constructor')) {
-                    const handler: Interface.IPrototype = this as any;
+                    const handler: Type.Prototype = this as any;
                     const members = getMembers(handler);
                     const innerInstance: any = members.getInnerInstance();
                     console.log(innerInstance);

@@ -25,7 +25,7 @@ export class HttpClient {
     }
     public getDefaultHeader(): OutgoingHttpHeaders {
         const cookie = (this.cookies instanceof Array)?this.cookies.join(';'):this.cookies;
-        console.log(cookie)
+        logger.log(cookie)
         return cookie?{
             'Cookie': cookie
         }:{};
@@ -38,12 +38,12 @@ export class HttpClient {
                 path: url + (param?('?'+querystring.stringify(param)):""),
                 headers: this.getDefaultHeader()
             };
-            console.log(options);
+            logger.log(options);
             httpGet(options, (response: ClientResponse) => {
                 let body: string = '';
                 const {statusCode, headers} = response;
-                console.log('HEADERS: ' + JSON.stringify(headers));  
-                console.log('STATUS: ' + response.statusCode + ' | ' + response.statusMessage);
+                logger.log('HEADERS: ' + JSON.stringify(headers));  
+                logger.log('STATUS: ' + response.statusCode + ' | ' + response.statusMessage);
 
                 const contentType = response.headers['content-type'];
                 let error;
@@ -53,7 +53,7 @@ export class HttpClient {
                   error = new Error('无效的 content-type.\n' +  `期望 application/json 但获取的是 ${contentType}`);
                 }
                 if (error) {
-                  console.error(error.message);
+                  logger.error(error.message);
                   // 消耗响应数据以释放内存
                   response.resume();
                   reject(error);
@@ -64,11 +64,11 @@ export class HttpClient {
                 response.on('data', next => body += next);
                 response.on('end', () => {
                     // Data reception is done, do whatever with it!
-                    console.log('end',body);
+                    logger.log('end',body);
                     resolve(body);
                 });
                 response.on('error',(err: Error)=>{
-                    console.log('error!',err);
+                    logger.log('error!',err);
                     reject(err);
                 });
             })
@@ -88,25 +88,25 @@ export class HttpClient {
             method: 'POST',
             path: url
         };
-        console.log(options, postData, param);
+        logger.log(options, postData, param);
         return new Promise((resolve,reject)=>{
             const request: ClientRequest = httpRequest(options, (response: ClientResponse) => {
                 // Continuously update stream with data
                 let body: string = '';
                 const {statusCode, statusMessage, headers} = response;
-                console.log('HEADERS: ' + JSON.stringify(headers));  
-                console.log('STATUS: ' + statusCode + ' | ' + statusMessage);
+                logger.log('HEADERS: ' + JSON.stringify(headers));  
+                logger.log('STATUS: ' + statusCode + ' | ' + statusMessage);
                 $.cookies = headers['set-cookie'];
-                console.log($.cookies,headers['set-cookie']);
+                logger.log($.cookies,headers['set-cookie']);
                 if(response.statusCode == 302) {// 重定向
-                    console.log(headers.location);
+                    logger.log(headers.location);
                     reject(new Error('redirect:'+headers.location));
                 }
                 response.setEncoding('utf-8');
                 response.on('data', next => body += next);
                 response.on('end', () => {
                     // Data reception is done, do whatever with it!
-                    console.log('end', body);
+                    logger.log('end', body);
                     resolve(body);
                 });
             });
@@ -115,7 +115,7 @@ export class HttpClient {
                 request.abort();
             });
             request.on('error',(err: Error)=>{
-                console.log('error!',err);
+                logger.log('error!',err);
                 reject(err);
             })
             request.write(postData);

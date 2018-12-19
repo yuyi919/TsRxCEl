@@ -2,9 +2,10 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import * as React from 'react';
 import { hydrate } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
-import './index.css';
-import registerServiceWorker from './registerServiceWorker';
-import Root from './RootRoutes';
+import registerServiceWorker from 'src/index/registerServiceWorker';
+import Root from 'src/index/RootRoutes';
+import './global';
+import './index/index.css';
 
 hydrate(
   <AppContainer><><CssBaseline /><Root /></></AppContainer>,

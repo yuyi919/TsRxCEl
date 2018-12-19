@@ -34,10 +34,10 @@ module.exports = {
             name: 'lib',
             context: __dirname,
         }),
-        new AssetsPlugin({
-          filename: 'bundle-config.json',
-          path: './'
-        })
+        // new AssetsPlugin({
+        //   filename: 'bundle-config.json',
+        //   path: './'
+        // })
     ],
 };
 

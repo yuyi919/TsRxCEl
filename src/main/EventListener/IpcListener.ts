@@ -23,7 +23,7 @@ export function IpcListener<T extends object>(target: IEventListenClass<T>): IEv
                 methodList.forEach((methodName: string) => {
                     const method = Reflect.get(instance, methodName, instance);
                     listener.listen((e: IpcMessageResponse<any>) => {
-                        console.log(e);
+                        logger.log(e);
                         const response = Reflect.apply(method, instance, [e.response, e.event]);
                         if (response instanceof Observable) {
                             response.subscribe(asyncResponse => {
@@ -46,7 +46,7 @@ export function IpcListener<T extends object>(target: IEventListenClass<T>): IEv
                     }
                 }
             });
-            // console.log(listenerMap);
+            // logger.log(listenerMap);
             return instance;
         }
     }) as IEventListenClass<T>;

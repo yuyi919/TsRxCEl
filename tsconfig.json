@@ -20,8 +20,17 @@
     "noUnusedLocals": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "allowUnreachableCode": false
+    "allowUnreachableCode": false,
+    "esModuleInterop": true,
+    "typeRoots": [
+      "node_modules/@types",
+      "./src/global"
+    ]
   },
+  "files":[
+    "src/global/index.ts",
+    "src/index.tsx",
+  ],
   "exclude": [
     "node_modules",
     "devlib",
@@ -30,11 +39,11 @@
     "scripts",
     "acceptance-tests",
     "webpack",
-    "jest",
-    "src/setupTests.ts"
+    "jest"
   ],
   "include": [
     "src/**/*.ts",
+    "src/**/*.d.ts",
     "src/**/*.tsx"
   ]
 }

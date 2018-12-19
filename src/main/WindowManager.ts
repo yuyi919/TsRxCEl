@@ -39,7 +39,7 @@ export class WindowManager {
         // Some APIs can only be used after this event occurs.
         this.app.on('ready', () => {
             if (this.win === null) {
-                console.log("Dev Server Starting");
+                logger.logLine(this, "Dev Server Starting");
                 this.win = this.mainWindow.create(this.callback);
             }
             // win.webContents.openDevTools();
@@ -63,11 +63,15 @@ export class WindowManager {
                 this.win = this.mainWindow.create();
             }
         });
+        this.app.on('will-quit', ()=>{
+            logger.log('System Quit')
+            logger.quit();
+        })
         return this;
     }
 
     public onDestroy(): void {
         this.channels.onDestroy();
-        console.log('disposed');
+        logger.log('disposed');
     }
 }

@@ -13,7 +13,7 @@ export class GuideProxy<T extends object> {
     private onDestroy: EventEmitter<any> = new EventEmitter<any>();
     private rootMap: Map<string, Array<string>> = new Map<string, Array<string>>();
     private willUpdate: boolean = true;
-    constructor(instance: Interface.IPrototype) {
+    constructor(instance: Type.Prototype) {
         this.init();
         this.members = getMembers(instance);
         this.proxy = this.getGuideProxy(instance);
@@ -52,7 +52,7 @@ export class GuideProxy<T extends object> {
      * @param keyName 
      * @param receiver 
      */
-    private getGuideProxy(target: Interface.IPrototype): T {
+    private getGuideProxy(target: Type.Prototype): T {
         console.warn(`代理了${this.getRootStr()}`, target)
         const { proxy, revoke } = Proxy.revocable(target, {
             get: (innerTarget: any, keyName: string, receiver: any) => {
@@ -104,7 +104,7 @@ export function computed<T extends object>(subName?: string, ...members: string[
         console.log(target, getMembers(target), computedGet);
         Object.assign(descriptor,{
             get(): any {
-                const instance: Interface.IPrototype = (this as any);
+                const instance: Type.Prototype = (this as any);
                 computedGet = computedGet.bind(instance);
                 console.log(instance, target);
                 let guideProxy: GuideProxy<T> = getGuideProxy(instance);
@@ -122,10 +122,10 @@ export function computed<T extends object>(subName?: string, ...members: string[
     }
 }
 
-export function getGuideProxy(target: Interface.IPrototype): GuideProxy<any>{
+export function getGuideProxy(target: Type.Prototype): GuideProxy<any>{
     return Reflect.get(target, '$$guideProxy');
 }
-export function setGuideProxy(target: Interface.IPrototype){
+export function setGuideProxy(target: Type.Prototype){
     const guideProxy: GuideProxy<any> = new GuideProxy(target);
     Reflect.defineProperty(target, '$$guideProxy', {
         writable: false,

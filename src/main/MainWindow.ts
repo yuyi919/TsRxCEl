@@ -31,7 +31,7 @@ export class MainWindow {
         this.development = development;
     }
     public create(callback?: getAppPath): BrowserWindow {
-        console.log('********** is development? **************', this.development);
+        logger.log('**********开发模式**************', this.development);
         const electronScreen = screen;
         const screenSize = electronScreen.getPrimaryDisplay().workAreaSize;
         const windowSize: Size = {
@@ -56,7 +56,7 @@ export class MainWindow {
     
         this.win.webContents.on("dom-ready",e=>{
             if(this.win!=null){
-                console.log("Completed")
+                logger.log("Completed")
                 this.win.show();
             }
         });
