@@ -1,10 +1,13 @@
 import * as iconv from 'iconv-lite';
-import path from 'path'
 // import {  } from 'electron-debug';
-import log4js, { Appender, Configuration, ConsoleAppender, DateFileAppender, FileAppender, StandardOutputAppender, LogLevelFilterAppender, Log4js } from 'log4js';
+import { Appender, Configuration, ConsoleAppender, DateFileAppender, FileAppender, Log4js, Logger as Logger4js, LogLevelFilterAppender, StandardOutputAppender } from 'log4js';
+// import { app } from 'node-log4js';
+import path from 'path';
+import 'log4js/lib/appenders/logLevelFilter';
 const isElectronRenderer = require('is-electron-renderer');
 const log4js_extend = require("log4js-extend");
-
+const log4js = require('log4js');
+// import('()=>{}')
 
 export class Logger {
     static systemPath: string;
@@ -12,7 +15,7 @@ export class Logger {
     private stduot: Appender & StandardOutputAppender = { type: 'stdout' }
     private file = (filename: string): FileAppender => ({
         type: 'file',
-        filename: path.join('D:/WorkSpace/TsRxCEl/build', './logs/' + filename + '.log'),//文件目录，当目录文件或文件夹不存在时，会自动创建
+        filename: path.join(process.cwd(), 'logs/' + filename + '.log'),//文件目录，当目录文件或文件夹不存在时，会自动创建
         maxLogSize: 1024,//文件最大存储空间，当文件内容超过文件存储空间会自动生成一个文件test.log.1的序列自增长的文件
         backups: 3,//default value = 5.当文件内容超过文件存储空间时，备份文件的数量
         //compress : true,//default false.是否以压缩的形式保存新文件,默认false。如果true，则新增的日志文件会保存在gz的压缩文件内，并且生成后将不被替换，false会被替换掉
@@ -20,15 +23,17 @@ export class Logger {
     })
     private dateFile = (filename: string): DateFileAppender => ({
         type: "dateFile",
-        filename: path.join('D:/WorkSpace/TsRxCEl/build', './logs/' + filename),//您要写入日志文件的路径
+        filename: path.join(process.cwd(), 'logs/' + filename),//您要写入日志文件的路径
         alwaysIncludePattern: true,//（默认为false） - 将模式包含在当前日志文件的名称以及备份中
         //compress : true,//（默认为false） - 在滚动期间压缩备份文件（备份文件将具有.gz扩展名）
         pattern: "-yyyy-MM-dd.log",//（可选，默认为.yyyy-MM-dd） - 用于确定何时滚动日志的模式。格式:.yyyy-MM-dd-hh:mm:ss.log
         encoding: 'utf-8',//default "utf-8"，文件的编码
     })
-    public errorFilter = ({ type, ...other }: Appender): LogLevelFilterAppender | DateFileAppender => ({
-        ...other, type: "logLevelFilter", appender: type,
-        level: "WARN", maxLevel: 'FATAL'
+    public errorFilter = (appender: string): LogLevelFilterAppender | DateFileAppender | any => isElectronRenderer?({}):({
+        [appender + 'Error']: {
+            type: "logLevelFilter", appender: appender,
+            level: "WARN", maxLevel: 'FATAL'
+        }
     });
 
     private config = (): Configuration => ({
@@ -37,7 +42,7 @@ export class Logger {
             stduot: this.stduot,
             file: this.file('renderer'),
             datefile: this.dateFile('system'),
-            errorDate: this.errorFilter(this.dateFile('error'))
+            ...this.errorFilter('datefile')
         },
         categories: {
             default: {
@@ -49,13 +54,13 @@ export class Logger {
                 level: 'all'
             },
             System: {
-                appenders: ['datefile', 'stduot', 'errorDate'],
+                appenders: ['datefile', 'stduot', ...(isElectronRenderer?[]:['datefileError'])],
                 level: 'all'
             }
         }
     })
-    private logger: log4js.Logger;
-    private logger2: log4js.Logger;
+    private logger: Logger4js;
+    private logger2: Logger4js;
     private name: string = isElectronRenderer ? "Renderer" : "System"
     private log4js: Log4js;
     constructor() {
@@ -66,7 +71,7 @@ export class Logger {
         if (!this.log4js) {
             log4js.configure(this.config());
             this.log4js = log4js_extend(log4js, {
-                path: 'D:/WorkSpace/TsRxCEl/build',
+                path: process.cwd(),
                 format: "- at Function: @name (@file:@line:@column)"
             })
             this.logger = this.log4js.getLogger(this.name);
