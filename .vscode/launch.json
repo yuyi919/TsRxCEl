@@ -1,46 +1,82 @@
 {
     "version": "0.2.0",
-    "configurations": [
-        {
+    "configurations": [{
             "type": "node",
             "request": "launch",
-            "name": "Electron Main",
-            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
-            "program": "${workspaceFolder}/main.js"
-        },
-        {
-            "name": "Electron",
-            "type": "node",
-            "request": "launch",
-            "args": [
-                "${workspaceRoot}\\scripts\\start-electron.js", // 入口文件
-                "${workspaceRoot}\\src\\main.ts"
+            "name": "Electron Main BuildRun",
+            "runtimeExecutable": "${workspaceFolder}\\node_modules\\.bin\\electron",
+            "args": ["."],
+            "runtimeArgs": [
+                "--nolazy",
+                "--max_old_space_size=2096"
             ],
+            "internalConsoleOptions": "neverOpen",
+            "cwd": "${workspaceRoot}",
+            "protocol": "inspector",
+            "sourceMaps": true,
+            "autoAttachChildProcesses": true
+        },{
+            "type": "node",
+            "request": "launch",
+            "name": "Electron Main DevRun",
+            "runtimeExecutable": "${workspaceFolder}\\node_modules\\.bin\\electron",
+            "args": ["${workspaceFolder}\\src\\main.ts"],
+            "env": {
+                "HOT": "1",
+                "NODE_ENV": "development"
+            },
             "runtimeArgs": [
                 "--nolazy",
                 "-r",
-                "ts-node/register",
+                "${workspaceRoot}\\scripts\\run-ts.js",
                 "--max_old_space_size=2096"
+            ],
+            "internalConsoleOptions": "neverOpen",
+            "cwd": "${workspaceRoot}",
+            "console": "integratedTerminal",
+            "protocol": "inspector",
+            "sourceMaps": true,
+            "autoAttachChildProcesses": true
+        },
+        {
+            "name": "Server Dev",
+            "type": "node",
+            "request": "launch",
+            "args": [
+                "${workspaceRoot}\\scripts\\start-electron.js"
+            ],
+            "env": {
+                "HOT": "1",
+                "NODE_ENV": "development"
+            },
+            "runtimeArgs": [
+                "--nolazy",
+                "--max_old_space_size=2096",
             ],
             "sourceMaps": true,
             "cwd": "${workspaceRoot}",
             "protocol": "inspector",
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",
-            "preLaunchTask": "development"
+            "autoAttachChildProcesses": true
         },
         {
             "name": "Current TS File",
             "type": "node",
             "request": "launch",
             "args": [
-              "${relativeFile}"
+                "${relativeFile}"
             ],
-            "runtimeArgs": ["-r", "ts-node/register"],
+            "runtimeArgs": [
+                "--nolazy",
+                "-r",
+                "${workspaceRoot}\\scripts\\run-ts.js",
+                "--max_old_space_size=2096"
+            ],
             "internalConsoleOptions": "neverOpen",
             "cwd": "${workspaceRoot}",
             "protocol": "inspector",
             "sourceMaps": true
-          }
+        }
     ]
 }

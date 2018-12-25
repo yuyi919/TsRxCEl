@@ -5,9 +5,8 @@ import { Appender, Configuration, ConsoleAppender, DateFileAppender, FileAppende
 import path from 'path';
 import 'log4js/lib/appenders/logLevelFilter';
 const isElectronRenderer = require('is-electron-renderer');
-const log4js_extend = require("log4js-extend");
 const log4js = require('log4js');
-// import('()=>{}')
+
 
 export class Logger {
     static systemPath: string;
@@ -29,7 +28,7 @@ export class Logger {
         pattern: "-yyyy-MM-dd.log",//（可选，默认为.yyyy-MM-dd） - 用于确定何时滚动日志的模式。格式:.yyyy-MM-dd-hh:mm:ss.log
         encoding: 'utf-8',//default "utf-8"，文件的编码
     })
-    public errorFilter = (appender: string): LogLevelFilterAppender | DateFileAppender | any => isElectronRenderer?({}):({
+    public errorFilter = (appender: string): LogLevelFilterAppender | DateFileAppender | any => isElectronRenderer ? ({}) : ({
         [appender + 'Error']: {
             type: "logLevelFilter", appender: appender,
             level: "WARN", maxLevel: 'FATAL'
@@ -54,30 +53,27 @@ export class Logger {
                 level: 'all'
             },
             System: {
-                appenders: ['datefile', 'stduot', ...(isElectronRenderer?[]:['datefileError'])],
+                appenders: (isElectronRenderer ? [] : ['datefileError']).concat(['datefile', 'stduot']),
                 level: 'all'
             }
         }
     })
     private logger: Logger4js;
-    private logger2: Logger4js;
+    public logger2: Logger4js;
     private name: string = isElectronRenderer ? "Renderer" : "System"
     private log4js: Log4js;
     constructor() {
-        console.log(this.config())
+        // console.log(this.config())
         if (!Logger.systemPath) {
             Logger.systemPath = __dirname || '';
         }
         if (!this.log4js) {
             log4js.configure(this.config());
-            this.log4js = log4js_extend(log4js, {
-                path: process.cwd(),
-                format: "- at Function: @name (@file:@line:@column)"
-            })
+            this.log4js = log4js;
             this.logger = this.log4js.getLogger(this.name);
             this.logger2 = this.log4js.getLogger();
         }
-        this.logger2.info(this.config());
+        // this.logger2.info(this.config());
     }
     public quit() {
         if (log4js) {
@@ -104,23 +100,23 @@ export class Logger {
     }
     public log(msg: any, ...msgs: any[]): void {
         if (isElectronRenderer) {
-            this.logger.trace(msg, ...msgs);
+            this.logger.trace(msg, ...msgs, this.getTrace(this.log));
         } else {
-            this.logger.info(msg, ...this.getStr(msgs));
+            this.logger.info(msg, ...this.getStr(msgs), this.getTrace(this.log));
         }
     }
     public warn(instance: any, ...msgs: any[]): void {
         if (isElectronRenderer) {
-            this.logger.debug(instance, ...msgs);
+            this.logger.debug(instance, ...msgs, this.getTrace(this.log));
         } else {
-            this.logger.warn(instance, ...this.getStr(msgs));
+            this.logger.warn(instance, ...this.getStr(msgs), this.getTrace(this.log));
         }
     }
     public error(instance: any, ...msgs: any[]): void {
         if (isElectronRenderer) {
-            this.logger.warn(instance, ...msgs);
+            this.logger.warn(instance, ...msgs, this.getTrace(this.log));
         } else {
-            this.logger.error(instance, ...this.getStr(msgs));
+            this.logger.error(instance, ...this.getStr(msgs), this.getTrace(this.log));
         }
     }
     public fatal(instance: any, ...msgs: any[]): void {
@@ -142,6 +138,44 @@ export class Logger {
     private transform(msg: string): string {
         return iconv.decode(iconv.encode(msg, 'binary'), "utf8");
     }
+
+    private prepareStackTrace(err: Error, stackTraces: NodeJS.CallSite[]): string | void {
+        let i: number = 0;
+        // const list = stackTraces.map(i=>i.getEvalOrigin());
+        // console.log(list);
+        while (stackTraces[i] != null) {
+            const trace = stackTraces[i++];
+            const fileName = trace.getFileName();
+            if (fileName && fileName.indexOf('src\\global\\') == -1 && (fileName.indexOf('src\\') > -1 || fileName.indexOf('localhost') > -1)) {
+                let functionName: string | null = trace.getFunctionName() || trace.getMethodName();
+                const line = trace.getLineNumber();
+                const column = trace.getColumnNumber();
+                // const currentIndex = i++;
+                // while (stackTraces[i] != null && (functionName == null || functionName.indexOf('_')==0) && (i-currentIndex)<16) {
+                //     functionName = stackTraces[i].getMethodName() || stackTraces[i].getFunctionName() || functionName;
+                //     i++;
+                // }
+                return ['Function: ', functionName || "<anonymous>", '  src: ', fileName, ':', line, ':', column].join('');
+            }
+        }
+    }
+    private getTrace(caller?: Function): string | void {
+        try {
+            throw new Error();
+        } catch (e) {
+            const stackList = ((e.stack || '') as string).split('\n');
+            let i: number = 1;
+            while (stackList[i] != null) {
+                const stack: string = stackList[i++];
+                if (stack.indexOf('src\\global\\') == -1 && (stack.indexOf('src\\') > -1 || stack.indexOf('localhost') > -1)) {
+                    return ' -' + stack;
+                }
+            }
+        } finally {
+            // Error.prepareStackTrace = original;
+        }
+    }
+
 }
 declare global {
     /**
