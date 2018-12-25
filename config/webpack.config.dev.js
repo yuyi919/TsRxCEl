@@ -8,13 +8,11 @@ const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
 const manifest = require('../devlib/lib_manifest.json');
-const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 const {
   getModuleRules
 } = require('./utils/getModuleRules');
@@ -175,14 +173,14 @@ module.exports = {
     // You can remove this if you don't use Moment.js:
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     // Perform type checking and linting in a separate process to speed up compilation
-    new ForkTsCheckerWebpackPlugin({
-      async: false,
-      watch: paths.appSrc,
-      tsconfig: paths.appTsConfig,
-      tslint: paths.appTsLint,
-      silent: true,
-      formatter: typescriptFormatter,
-    }),
+    // new ForkTsCheckerWebpackPlugin({
+    //   async: false,
+    //   watch: paths.appSrc,
+    //   tsconfig: paths.appTsConfig,
+    //   tslint: paths.appTsLint,
+    //   silent: true,
+    //   formatter: typescriptFormatter,
+    // }),
   ],
   // Some libraries import Node modules but don't use them in the browser.
   // Tell Webpack to provide empty mocks for them so importing them works.

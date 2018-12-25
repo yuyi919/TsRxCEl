@@ -8,7 +8,7 @@
     "outDir": "../build",
     "skipLibCheck": true,
     "listEmittedFiles": true,
-    "removeComments": true,
+    // "removeComments": true,
     "rootDir": "",
     "allowUnusedLabels": true,
     "paths": {

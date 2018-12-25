@@ -21,7 +21,7 @@ export const MainFrame: AppStores.OComponent = withStyle(
                 <Provider mainFrameStore={store} classes={classes}>
                     <div className={classes.root}>
                         <OTopBar mainFrameStore={store}>
-                            <Lite.LiteButton type='text' routerLink='/' onClick={recreate}>重启1</Lite.LiteButton>
+                            <Lite.LiteButton type='text' routerLink='/' onClick={recreate}>重启</Lite.LiteButton>
                             <Lite.LiteButton type='text' routerLink='/' onClick={reload}>重载</Lite.LiteButton>
                             <Lite.LiteButton type='text' routerLink='/' onClick={getPath}>选择文件路径</Lite.LiteButton>
                             <Lite.LiteButton type='text' routerLink='/' onClick={open}>打开exo文件</Lite.LiteButton>

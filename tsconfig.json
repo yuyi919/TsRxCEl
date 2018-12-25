@@ -10,6 +10,7 @@
     "allowJs": false,
     "jsx": "react",
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "rootDir": "",
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
@@ -27,7 +28,7 @@
       "./src/global"
     ]
   },
-  "files":[
+  "files": [
     "src/global/index.ts",
     "src/index.tsx",
   ],

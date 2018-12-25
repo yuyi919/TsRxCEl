@@ -134,12 +134,18 @@ const getModuleRules = ({
             cacheCompression: false,
           })),
         },
+        {
+          test: /node_modules[\/\\](iconv-lite)[\/\\].+/,
+          resolve: {
+            aliasFields: ['main']
+          }
+        },
         // Compile .tsx?
         {
           test: /\.(ts|tsx)$/,
           include: paths.appSrc,
           [loadKey]: [{
-            loader: require.resolve('ts-loader'),
+            loader: require.resolve('awesome-typescript-loader'),
             options: {
               // disable type checker - we will use it in fork plugin
               transpileOnly: true,

@@ -10,8 +10,9 @@
             "problemMatcher": []
         },
         {
+            "label": "监视ts",
             "type": "typescript",
-            "tsconfig": "TsRxCEl2\\tsconfig.json",
+            "tsconfig": "tsconfig.json",
             "option": "watch",
             "problemMatcher": [
                 "$tsc-watch"
@@ -24,9 +25,15 @@
             "problemMatcher": []
         },
         {
-            "label": "development",
+            "label": "start-hot",
             "type": "npm",
-            "script": "development",
+            "script": "start-hot",
+            "problemMatcher": []
+        },
+        {
+            "label": "hot-server",
+            "type": "npm",
+            "script": "hot-server",
             "problemMatcher": []
         }
     ]

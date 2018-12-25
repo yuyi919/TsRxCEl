@@ -1,12 +1,11 @@
-import * as iconv from 'iconv-lite';
+// import * as iconv from 'iconv-lite';
 // import {  } from 'electron-debug';
-import { Appender, Configuration, ConsoleAppender, DateFileAppender, FileAppender, Log4js, Logger as Logger4js, LogLevelFilterAppender, StandardOutputAppender } from 'log4js';
+import log4js, { Appender, Configuration, ConsoleAppender, DateFileAppender, FileAppender, Log4js, Logger as Logger4js, LogLevelFilterAppender, StandardOutputAppender } from 'log4js';
 // import { app } from 'node-log4js';
 import path from 'path';
 import 'log4js/lib/appenders/logLevelFilter';
-const isElectronRenderer = require('is-electron-renderer');
-const log4js = require('log4js');
-
+const isElectronRenderer: boolean = require('is-electron-renderer');
+const isDevelopment: boolean = process && process.env && process.env.NODE_ENV === 'development';
 
 export class Logger {
     static systemPath: string;
@@ -18,20 +17,22 @@ export class Logger {
         maxLogSize: 1024,//文件最大存储空间，当文件内容超过文件存储空间会自动生成一个文件test.log.1的序列自增长的文件
         backups: 3,//default value = 5.当文件内容超过文件存储空间时，备份文件的数量
         //compress : true,//default false.是否以压缩的形式保存新文件,默认false。如果true，则新增的日志文件会保存在gz的压缩文件内，并且生成后将不被替换，false会被替换掉
-        encoding: 'utf-8',//default "utf-8"，文件的编码
+        encoding: 'utf-8',//default "utf-8"，文件的编码,
+        keepFileExt: true
     })
     private dateFile = (filename: string): DateFileAppender => ({
         type: "dateFile",
         filename: path.join(process.cwd(), 'logs/' + filename),//您要写入日志文件的路径
-        alwaysIncludePattern: true,//（默认为false） - 将模式包含在当前日志文件的名称以及备份中
-        //compress : true,//（默认为false） - 在滚动期间压缩备份文件（备份文件将具有.gz扩展名）
+        alwaysIncludePattern: isDevelopment,//（默认为false） - 将模式包含在当前日志文件的名称以及备份中
+        // compress : true,//（默认为false） - 在滚动期间压缩备份文件（备份文件将具有.gz扩展名）
         pattern: "-yyyy-MM-dd.log",//（可选，默认为.yyyy-MM-dd） - 用于确定何时滚动日志的模式。格式:.yyyy-MM-dd-hh:mm:ss.log
         encoding: 'utf-8',//default "utf-8"，文件的编码
+        keepFileExt: true
     })
-    public errorFilter = (appender: string): LogLevelFilterAppender | DateFileAppender | any => isElectronRenderer ? ({}) : ({
+    public errorFilter = (appender: string): { [key: string]: LogLevelFilterAppender } => isElectronRenderer ? ({}) : ({
         [appender + 'Error']: {
             type: "logLevelFilter", appender: appender,
-            level: "WARN", maxLevel: 'FATAL'
+            level: "ALL"
         }
     });
 
@@ -39,9 +40,12 @@ export class Logger {
         appenders: {
             console: this.console,
             stduot: this.stduot,
-            file: this.file('renderer'),
-            datefile: this.dateFile('system'),
-            ...this.errorFilter('datefile')
+            renderFile: this.file('renderer'),
+            renderDatafile: this.dateFile('renderer'),
+            systemFile: this.file('system'),
+            systemDatefile: this.dateFile('system'),
+            ...this.errorFilter('renderDatafile'),
+            ...this.errorFilter('systemDatefile'),
         },
         categories: {
             default: {
@@ -49,13 +53,21 @@ export class Logger {
                 level: 'all'
             },
             Renderer: {
-                appenders: ['console', 'file', 'stduot'],
+                appenders: ['console', 'renderFile', 'renderDatafile', 'stduot'],
                 level: 'all'
             },
             System: {
-                appenders: (isElectronRenderer ? [] : ['datefileError']).concat(['datefile', 'stduot']),
+                appenders: ['systemFile', 'systemDatefileError', 'stduot'],
                 level: 'all'
-            }
+            },
+            // RendererError: {
+            //     appenders: ['console', 'renderFile', 'stduot'],
+            //     level: 'all'
+            // },
+            // SystemError: {
+            //     appenders: ['console', 'renderFile', 'stduot'],
+            //     level: 'all'
+            // },
         }
     })
     private logger: Logger4js;
@@ -72,6 +84,12 @@ export class Logger {
             this.log4js = log4js;
             this.logger = this.log4js.getLogger(this.name);
             this.logger2 = this.log4js.getLogger();
+        }
+        if (isElectronRenderer) {
+            this.logger.error = this.logger.warn;
+            this.logger.warn = this.logger.debug;
+            this.logger.info = this.logger.trace;
+            this.logger.log();
         }
         // this.logger2.info(this.config());
     }
@@ -94,72 +112,90 @@ export class Logger {
         } else if (typeof instance == "string") {
             title = instance
         }
-        this.log(`#*******#${title}#*******#`)
+        this.trace(`=====${title}=====`)
         this.log(msgs);
-        this.log(`#*******#${title}#*******#`)
+        this.trace(`=====${title}=====`)
     }
-    public log(msg: any, ...msgs: any[]): void {
-        if (isElectronRenderer) {
-            this.logger.trace(msg, ...msgs, this.getTrace(this.log));
-        } else {
-            this.logger.info(msg, ...this.getStr(msgs), this.getTrace(this.log));
+    public log(...msgs: any[]): void {
+        this.logger.info(this.getOutput(...msgs, this.getTrace()));
+    }
+
+    public warn(...msgs: any[]): void {
+        this.logger.warn(this.getOutput(...msgs, this.getTrace()));
+    }
+
+    /**
+     * 调试输出
+     * @param dbs 想输出的队列平铺
+     */
+    public debug(...dbs: any[]): void {
+        const trace = this.getTrace();
+        this.trace('=====debug');
+        for(const db of dbs){
+            this.logger.debug(db);
         }
+        this.trace('=====debug: '+ trace);
     }
-    public warn(instance: any, ...msgs: any[]): void {
-        if (isElectronRenderer) {
-            this.logger.debug(instance, ...msgs, this.getTrace(this.log));
+    /**
+     * 错误提示
+     * @param instance 理由/对象/捕获异常
+     */
+    public error(instance: string | object | Error): void {
+        const trace = this.getTrace();
+        if(instance instanceof Error){
+            this.logger.error(instance);
+            this.logger.trace('catch:' + trace);
         } else {
-            this.logger.warn(instance, ...this.getStr(msgs), this.getTrace(this.log));
-        }
-    }
-    public error(instance: any, ...msgs: any[]): void {
-        if (isElectronRenderer) {
-            this.logger.warn(instance, ...msgs, this.getTrace(this.log));
-        } else {
-            this.logger.error(instance, ...this.getStr(msgs), this.getTrace(this.log));
-        }
-    }
-    public fatal(instance: any, ...msgs: any[]): void {
-        if (isElectronRenderer) {
-            this.logger.fatal(instance, ...msgs);
-        } else {
-            this.logger.fatal(instance, ...this.getStr(msgs));
+            this.logger.error(this.getOutput(instance, trace));
         }
     }
 
-    private getStr(msgs: any[]): any[] {
+    /**
+     * 致命错误
+     * @param error 抛出的错误
+     * @returns promise返回捕获错误的位置信息
+     */
+
+    public fatal(error: Error): Promise<string> {
+        return this.getTraceAsync().then((trace: string) => {
+            this.logger.fatal(error);
+            this.trace(this.getOutput('catch', trace))
+            return trace;
+        })
+    }
+
+    /**
+     * 跟踪
+     * @param msg 跟踪消息
+     */
+    public trace(msg: string): void {
+        this.logger.trace(msg);
+    }
+
+    private getOutput(...msgs: any[]): string {
         for (let i in msgs) {
-            if (typeof msgs[i] == "string") {
+            if (typeof msgs[i] == "object") {
                 msgs[i] = this.transform(msgs[i]);
             }
         }
-        return msgs;
+        return msgs.join(' ');
     }
-    private transform(msg: string): string {
-        return iconv.decode(iconv.encode(msg, 'binary'), "utf8");
+    private transform(msg: any): string {
+        // return iconv.decode(iconv.encode(msg, 'binary'), "utf8");
+        return JSON.stringify(msg);
     }
 
-    private prepareStackTrace(err: Error, stackTraces: NodeJS.CallSite[]): string | void {
-        let i: number = 0;
-        // const list = stackTraces.map(i=>i.getEvalOrigin());
-        // console.log(list);
-        while (stackTraces[i] != null) {
-            const trace = stackTraces[i++];
-            const fileName = trace.getFileName();
-            if (fileName && fileName.indexOf('src\\global\\') == -1 && (fileName.indexOf('src\\') > -1 || fileName.indexOf('localhost') > -1)) {
-                let functionName: string | null = trace.getFunctionName() || trace.getMethodName();
-                const line = trace.getLineNumber();
-                const column = trace.getColumnNumber();
-                // const currentIndex = i++;
-                // while (stackTraces[i] != null && (functionName == null || functionName.indexOf('_')==0) && (i-currentIndex)<16) {
-                //     functionName = stackTraces[i].getMethodName() || stackTraces[i].getFunctionName() || functionName;
-                //     i++;
-                // }
-                return ['Function: ', functionName || "<anonymous>", '  src: ', fileName, ':', line, ':', column].join('');
-            }
-        }
-    }
-    private getTrace(caller?: Function): string | void {
+    private getTraceAsync = () => new Promise((resolve) => {
+        const trace: string = this.getTrace();
+        setTimeout(() => {
+            resolve(trace)
+        }, 200)
+    })
+
+    /**
+     * 返回输出源的栈
+     */
+    private getTrace(): string {
         try {
             throw new Error();
         } catch (e) {
@@ -167,13 +203,12 @@ export class Logger {
             let i: number = 1;
             while (stackList[i] != null) {
                 const stack: string = stackList[i++];
-                if (stack.indexOf('src\\global\\') == -1 && (stack.indexOf('src\\') > -1 || stack.indexOf('localhost') > -1)) {
+                if (stack.indexOf('src\\global\\') == -1 && (stack.indexOf('src\\') > -1 && (stack.indexOf('at Logger.') == -1))) {
                     return ' -' + stack;
                 }
             }
-        } finally {
-            // Error.prepareStackTrace = original;
         }
+        return ''
     }
 
 }
@@ -182,19 +217,25 @@ declare global {
      * log4js
      */
     var logger: Logger;
+    var isElectronRenderer: boolean;
+    var isDevelopment: boolean;
     namespace NodeJS {
         interface Global {
             logger: Logger
+            isElectronRenderer: boolean;
+            isDevelopment: boolean;
         }
     }
     interface Window {
-        logger: Logger
+        logger: Logger;
+        isElectronRenderer: boolean;
     }
 }
 
 const logger = new Logger();
 Object.freeze(logger)
 global.logger = logger;
+global.isElectronRenderer = isElectronRenderer;
 // declare const window: Window;
 // if(window != undefined) {
 //     window.logger = logger;

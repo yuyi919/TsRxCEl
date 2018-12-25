@@ -20,25 +20,34 @@ if (process.env.NODE_ENV === 'development') {
 // const MainLibrary: any = require('../build/main/index');
 // const MainLibrary = require('../devlib/main/src/main/index');
 // declare const MainLibrary: any;
+
+class Main {
+    public static main(): void{
+        const windowManager = new MainLibrary.WindowManager(app, serve, () => {
+            if (serve) {
+                const path = require('path'); // eslint-disable-line
+                require('electron-reload')(__dirname, {
+                    electron: require(path.join(__dirname, `../node_modules/electron`))
+                });
+                logger.log("dev reload");
+                return 'http://localhost:3000/';
+            } else {
+                const path = require('path'); // eslint-disable-line
+                logger.log(path.join(__dirname, './index.html'))
+                return __dirname;
+            }
+        });
+        logger.log(windowManager);
+        windowManager.process();
+        // throw new Error('test');
+    }
+}
 try {
-    logger.log(MainLibrary, typeof MainLibrary);
+    // logger.log(MainLibrary, typeof MainLibrary);
     // const superAgent: SuperAgent<any> = require('superagent');
-    const windowManager = new MainLibrary.WindowManager(app, serve, () => {
-        if (serve) {
-            const path = require('path'); // eslint-disable-line
-            require('electron-reload')(__dirname, {
-                electron: require(path.join(__dirname, `../node_modules/electron`))
-            });
-            logger.log("dev reload");
-            return 'http://localhost:3000/';
-        } else {
-            const path = require('path'); // eslint-disable-line
-            logger.log(path.join(__dirname, './index.html'))
-            return __dirname;
-        }
-    });
-    logger.log(windowManager);
-    windowManager.process();
+    // logger.log(require('../config/webpack.config.dev'));
+
+    Main.main();
     // let http: HttpClient;
     // ipcMain.on('http-get', (event: IpcMessageEvent, url: string, param?: object, ...args: any[]) => {
     //     superAgent.get(encodeURI(url)).end((err: any, res: any) => {
@@ -83,8 +92,10 @@ try {
     // Catch Error
     // throw e;
 
-    logger.fatal(e);
-    app.quit();
+    logger.fatal(e).then(()=>{
+        app.quit();
+        process.exit();
+    });
 }
 
 export default {

@@ -1,8 +1,16 @@
-'use strict';
-
-// Do this as the first thing so that any code reading it knows the right env.
-process.env.BABEL_ENV = 'development';
-process.env.NODE_ENV = 'development';
+import chalk from 'chalk';
+import { spawn } from 'child_process';
+import fs from 'fs';
+import checkRequiredFiles from 'react-dev-utils/checkRequiredFiles';
+import clearConsole from 'react-dev-utils/clearConsole';
+import { choosePort, createCompiler, prepareProxy, prepareUrls } from 'react-dev-utils/WebpackDevServerUtils';
+import webpack from 'webpack';
+import WebpackDevServer from 'webpack-dev-server';
+// Ensure environment variables are read.
+import '../config/env';
+import paths from '../config/paths';
+import config from '../config/webpack.config.dev';
+import createDevServerConfig from '../config/webpackDevServer.config';
 
 // Makes the script crash on unhandled rejections instead of silently
 // ignoring them. In the future, promise rejections that are not handled will
@@ -10,26 +18,6 @@ process.env.NODE_ENV = 'development';
 process.on('unhandledRejection', err => {
   throw err;
 });
-
-// Ensure environment variables are read.
-require('../config/env');
-
-const fs = require('fs');
-const chalk = require('chalk');
-const webpack = require('webpack');
-const { spawn } = require('child_process');
-const WebpackDevServer = require('webpack-dev-server');
-const clearConsole = require('react-dev-utils/clearConsole');
-const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
-const {
-  choosePort,
-  createCompiler,
-  prepareProxy,
-  prepareUrls,
-} = require('react-dev-utils/WebpackDevServerUtils');
-const paths = require('../config/paths');
-const config = require('../config/webpack.config.dev');
-const createDevServerConfig = require('../config/webpackDevServer.config');
 
 const useYarn = fs.existsSync(paths.yarnLockFile);
 const isInteractive = process.stdout.isTTY;
@@ -53,9 +41,7 @@ const HOST = process.env.HOST || '0.0.0.0';
 if (process.env.HOST) {
   console.log(
     chalk.cyan(
-      `Attempting to bind to HOST environment variable: ${chalk.yellow(
-        chalk.bold(process.env.HOST)
-      )}`
+      `Attempting to bind to HOST environment variable: ${chalk.yellow(chalk.bold(process.env.HOST))}`
     )
   );
   console.log(
@@ -95,30 +81,21 @@ choosePort(HOST, DEFAULT_PORT)
       if (isInteractive) {
         clearConsole();
       }
-      console.log(`Listening at http://${HOST}:${port}`, process.argv);
+      console.log(`${chalk.yellow('Listening at http://${HOST}:${port}')}`, process.argv);
 
       if(process.argv.indexOf('--electron') >-1 ){
-        spawn('npm', ['run', 'start-hot2'], { shell: true, env: process.env, stdio: 'inherit' })
+        spawn('npm', ['run', 'start-hot'], { shell: true, env: process.env, stdio: 'inherit' })
           .on('close', code => process.exit(code))
           .on('error', spawnError => console.error(spawnError));
       }
     });
 
-    ['SIGINT', 'SIGTERM'].forEach(function(sig) {
+    ['SIGINT', 'SIGTERM'].forEach((sig: 'SIGINT' | 'SIGTERM')=>{
       process.on(sig, function() {
         devServer.close();
         process.exit();
       });
     });
-    // ['SIGINT', 'SIGTERM'].forEach(function(sig) {
-    //   process.on(sig, function() {
-    //     console.log("*********close")
-    //     wdm.close();
-    //     server.close(() => {
-    //       process.exit();
-    //     });
-    //   });
-    // });
   })
   .catch(err => {
     if (err && err.message) {

@@ -40,12 +40,12 @@ export class WindowManager {
         this.app.on('ready', () => {
             if (this.win === null) {
                 logger.logLine(this, "Dev Server Starting");
+                // win.webContents.openDevTools();
+                // require('electron-react-devtools').install();
                 this.win = this.mainWindow.create(this.callback);
             }
-            // win.webContents.openDevTools();
-            // require('electron-react-devtools').install();
         });
-
+        
         // Quit when all windows are closed.
         this.app.on('window-all-closed', () => {
             // On OS X it is common for applications and their menu bar
@@ -63,15 +63,22 @@ export class WindowManager {
                 this.win = this.mainWindow.create();
             }
         });
-        this.app.on('will-quit', ()=>{
-            logger.log('System Quit')
-            logger.quit();
-        })
+        this.app.on('will-quit', this.onDestroy.bind(this));
         return this;
+    }
+
+    public onReady() {
+        if (this.win === null) {
+            logger.logLine(this, "Dev Server Starting");
+            // win.webContents.openDevTools();
+            // require('electron-react-devtools').install();
+            this.win = this.mainWindow.create(this.callback);
+        }
     }
 
     public onDestroy(): void {
         this.channels.onDestroy();
-        logger.log('disposed');
+        logger.log('System Exit')
+        logger.quit();
     }
 }
