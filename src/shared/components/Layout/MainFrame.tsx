@@ -1,5 +1,5 @@
 import { Provider } from 'mobx-react';
-import * as React from 'react';
+import React from 'react';
 import { FileDialog } from 'src/main/Electron/dialog';
 import { openAulFile, windowReCreate, windowReload } from 'src/shared/clientApi';
 import * as Lite from 'src/shared/components/Lite';
@@ -8,10 +8,21 @@ import { ODrawer, OMainPanel, OTopBar } from './OComponent';
 import { MainFrameStore } from './store';
 import withStyle from './styles';
 
+// export function AppTest(init: number) {
+//     console.log('start')
+//     console.log(useState(init))
+//     const [app, setApp] = useState(init);
+//     return {
+//         app,
+//         setApp: () => { setApp(app+1) }
+//     }
+// }
 export interface IMainFrameProps {
     children?: React.ReactNode | React.ReactNodeArray;
 }
-
+// const OTopBar = React.lazy(() => Promise.all([import("./OComponent/OTopBar"),new Promise((r)=>{
+//     setTimeout(()=>r(true), 100)
+// })]).then(out=>out[0]))
 export const MainFrame: AppStores.OComponent = withStyle(
     AppChildContainer(
         ({ children, appStore, classes = {} }: AppStores.OStyledProps & AppStores.Adapter) => {
@@ -20,13 +31,15 @@ export const MainFrame: AppStores.OComponent = withStyle(
             return (
                 <Provider mainFrameStore={store} classes={classes}>
                     <div className={classes.root}>
-                        <OTopBar mainFrameStore={store}>
-                            <Lite.LiteButton type='text' routerLink='/' onClick={recreate}>重启</Lite.LiteButton>
-                            <Lite.LiteButton type='text' routerLink='/' onClick={reload}>重载</Lite.LiteButton>
-                            <Lite.LiteButton type='text' routerLink='/' onClick={getPath}>选择文件路径</Lite.LiteButton>
-                            <Lite.LiteButton type='text' routerLink='/' onClick={open}>打开exo文件</Lite.LiteButton>
-                            <Lite.LiteButton type='text' routerLink='/' onClick={store.openHandler}>打开txt文件</Lite.LiteButton>
-                        </OTopBar>
+                        <React.Suspense fallback={<div>Loading...</div>}>
+                            <OTopBar>
+                                <Lite.LiteButton type='text' routerLink='/' onClick={recreate}>重启</Lite.LiteButton>
+                                <Lite.LiteButton type='text' routerLink='/' onClick={reload}>重载</Lite.LiteButton>
+                                <Lite.LiteButton type='text' routerLink='/' onClick={getPath}>选择文件路径</Lite.LiteButton>
+                                <Lite.LiteButton type='text' routerLink='/' onClick={open}>打开exo文件</Lite.LiteButton>
+                                <Lite.LiteButton type='text' routerLink='/' onClick={store.openHandler}>打开txt文件</Lite.LiteButton>
+                            </OTopBar>
+                        </React.Suspense>
                         <ODrawer>
                             <div className={classes.toolbar} />
                         </ODrawer>

@@ -39,7 +39,7 @@ export default merge(Common({
       manifest
     }),
     // html导入dll
-    new AddAssetHtmlPlugin({ filepath: path.join(__dirname, '../devlib/lib.dll.js'), includeRelatedFiles: false }),
+    new AddAssetHtmlPlugin({ filepath: path.join(__dirname, '../devlib/lib.dll.js'), includeRelatedFiles: true }),
     // 确定模块名
     new webpack.NamedModulesPlugin(),
     // 模块热替换

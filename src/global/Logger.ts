@@ -3,6 +3,7 @@
 import log4js, { Appender, Configuration, ConsoleAppender, DateFileAppender, FileAppender, Log4js, Logger as Logger4js, LogLevelFilterAppender, StandardOutputAppender } from 'log4js';
 // import { app } from 'node-log4js';
 import path from 'path';
+// import 'json5';
 import 'log4js/lib/appenders/logLevelFilter';
 const isElectronRenderer: boolean = require('is-electron-renderer');
 const isDevelopment: boolean = process && process.env && process.env.NODE_ENV === 'development';
@@ -57,7 +58,7 @@ export class Logger {
                 level: 'all'
             },
             System: {
-                appenders: ['systemFile', 'systemDatefileError', 'stduot'],
+                appenders: ['systemFile', 'stduot'],
                 level: 'all'
             },
             // RendererError: {
@@ -159,7 +160,7 @@ export class Logger {
     public fatal(error: Error): Promise<string> {
         return this.getTraceAsync().then((trace: string) => {
             this.logger.fatal(error);
-            this.trace(this.getOutput('catch', trace))
+            this.trace('catch' + trace)
             return trace;
         })
     }
@@ -172,7 +173,10 @@ export class Logger {
         this.logger.trace(msg);
     }
 
-    private getOutput(...msgs: any[]): string {
+    private getOutput(...msgs: any[]): string | any[] {
+        if (isElectronRenderer){
+            return msgs
+        }
         for (let i in msgs) {
             if (typeof msgs[i] == "object") {
                 msgs[i] = this.transform(msgs[i]);
@@ -182,7 +186,10 @@ export class Logger {
     }
     private transform(msg: any): string {
         // return iconv.decode(iconv.encode(msg, 'binary'), "utf8");
-        return JSON.stringify(msg);
+        // if(typeof msg === 'object'){
+        //     return JSON.stringify({...msg});
+        // }
+        return msg+''
     }
 
     private getTraceAsync = () => new Promise((resolve) => {
@@ -203,7 +210,11 @@ export class Logger {
             let i: number = 1;
             while (stackList[i] != null) {
                 const stack: string = stackList[i++];
-                if (stack.indexOf('src\\global\\') == -1 && (stack.indexOf('src\\') > -1 && (stack.indexOf('at Logger.') == -1))) {
+                if (
+                  ( stack.indexOf('src\\global\\') == -1 || stack.indexOf('build\\global\\') == -1 ) &&
+                  ( stack.indexOf('src\\') > -1 || stack.indexOf('build\\') > -1 ) &&
+                  ( stack.indexOf('at Logger.') == -1) 
+                ) {
                     return ' -' + stack;
                 }
             }

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "build/dist",
-    "module": "es6",
+    "module": "commonjs",
     "declaration": false,
     "target": "es2018",
     "lib": ["es6", "dom", "dom.iterable", "scripthost"],

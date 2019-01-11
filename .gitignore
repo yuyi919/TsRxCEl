@@ -28,4 +28,5 @@ src/**/*.js
 devlib
 lib_manifest.json
 **/*.log
+del_node_modules.bat
 logs

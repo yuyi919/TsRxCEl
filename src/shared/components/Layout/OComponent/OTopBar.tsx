@@ -6,8 +6,9 @@ import { Adapter, OComponent, OMainFrameComponentFactory, OStyledProps } from '.
 
 // import withStyle from './styles';
 
+export type ClassKey = 'appBarShift' | 'appBar';
 export const OTopBar: OComponent<Lite.ITopBarProps> = OMainFrameComponentFactory(
-    ({ classes = {}, children, mainFrameStore, className, ...other }: OStyledProps<Lite.ITopBarProps> & Adapter) => {
+    ({ classes = {}, children, mainFrameStore, className, ...other }: OStyledProps<Lite.ITopBarProps, ClassKey> & Adapter) => {
         return (
             <Lite.TopBar
                 title={mainFrameStore.title}
@@ -22,3 +23,5 @@ export const OTopBar: OComponent<Lite.ITopBarProps> = OMainFrameComponentFactory
         );
     }
 );
+
+export default OTopBar;
